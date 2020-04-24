@@ -1,0 +1,219 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Welcome to pytest_mproc’s documentation! &#8212; pytest_mproc  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Developer Guide" href="developer-guide.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-pytest-mproc-s-documentation">
+<h1>Welcome to pytest_mproc’s documentation!<a class="headerlink" href="#welcome-to-pytest-mproc-s-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="developer-guide.html">Developer Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer-guide.html#a-note-about-running-tests-for-pytest-mproc">A Note about Running Tests for pytest_mproc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer-guide.html#module-pytest_mproc.coordinator">Coordinator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer-guide.html#module-pytest_mproc.worker">Worker</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>Welcome to pytest-mproc, a plugin for pytest to run distributed testing via multiprocessing.  This manner
+of distributed testing has several advantages, including more efficient execution over pytest-xdist in many cases.</p>
+<p>xdist works for cases perhaps where there are large number of tests, but the cost of overhead in using rsync and
+overall implementation prevents realization of test-execution-time gains that one might hope for.</p>
+<p>To begin using pytest_mproc, just install:</p>
+<p>% pip install pytest-mproc</p>
+</div>
+<div class="section" id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<p>To use with pytest, you use the -C or equivalently –cores argument to specify how many cores to run on:</p>
+<p>% pytest –cores 3 [remaining arguments]</p>
+<p>or to specify use of all available cores:</p>
+<p>% pytest –cores auto [remaining arguments]</p>
+<p>You can also specify things like “auto*2” or “auto/2” for number of cores</p>
+</div>
+<div class="section" id="disabling-mproc-from-command-line">
+<h1>Disabling Mproc from Command Line<a class="headerlink" href="#disabling-mproc-from-command-line" title="Permalink to this headline">¶</a></h1>
+<p>To disable mproc (overriding all other pytest-mproc-related flags), specify “–diable-mproc True” on the command line.</p>
+</div>
+<div class="section" id="grouping-tests">
+<h1>Grouping Tests<a class="headerlink" href="#grouping-tests" title="Permalink to this headline">¶</a></h1>
+<p>By default all tests are assumed independently runnable and isolated from one another.  That is the order in which they
+run within which process does not matter.  You may wish to specify a group of tests that must run serially within the
+same process/thread.  To do this, annotate each test using a unique name for the group:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest_mproc</span>
+<span class="n">TEST_GROUP1</span> <span class="o">=</span> <span class="s2">&quot;group1&quot;</span>
+
+<span class="nd">@pytest_mproc</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">TEST_GROUP1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_something1</span><span class="p">():</span>
+     <span class="k">pass</span>
+
+<span class="nd">@pytest_mproc</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">TEST_GROUP1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_something2</span><span class="p">():</span>
+     <span class="k">pass</span>
+</pre></div>
+</div>
+<p>Likewise, you can use the same annotation on test class to group all test methods within that class:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest_mproc</span>
+
+<span class="n">TEST_GROUP_CLASSS</span> <span class="o">=</span> <span class="s2">&quot;class_group&quot;</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mproc</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">TEST_GROUP_CLASS</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">TestClass</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">test_method1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">test_method2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="k">pass</span>
+</pre></div>
+</div>
+<p>This is useful if the tests are using a common resource for testing and parallelized execution of tests might
+result in interference.</p>
+</div>
+<div class="section" id="global-initializers-finalizers">
+<h1>Global Initializers/Finalizers<a class="headerlink" href="#global-initializers-finalizers" title="Permalink to this headline">¶</a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Much like pytest-xdist, session level variables are called once for EACH THREAD.  So if you run on 4 cores, each
+session-scoped fixture will run 4 times.  This is because forking is used to parallelize tests.</p>
+</div>
+<p>To add an initializer and finalzier to be called only once before all tests execute and after all tests executed,
+respectively, use fixture from the pytest_mproc_utils package:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pytest_mproc.utils</span> <span class="kn">import</span> <span class="n">global_initializer</span><span class="p">,</span> <span class="n">global_finalizer</span>
+<span class="nd">@pytest_mproc_global_initializer</span>
+<span class="k">def</span> <span class="nf">initualizer</span><span class="p">():</span>
+    <span class="k">pass</span>
+
+<span class="nd">@pytest_mproc_global_finalizer</span>
+<span class="k">def</span> <span class="nf">finalizer</span><span class="p">():</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="global-session-context-manager">
+<h1>Global Session Context Manager<a class="headerlink" href="#global-session-context-manager" title="Permalink to this headline">¶</a></h1>
+<p>Alternatively, you can use a context manager (either a function with a single yield or a class with __enter__ and __exit__ methods). The function,
+or the __init__ method in the case of a class, must not take any arguments.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pytest_mproc.utils</span> <span class="kn">import</span> <span class="n">global_session_context</span>
+
+<span class="nd">@global_session_context</span>
+<span class="k">class</span> <span class="nc">ContextManager</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># setup some resource globally once for all tests/processes being run</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># teardown/shutdown resources set up on enter</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">pytest_mproc</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="developer-guide.html">Developer Guide</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="developer-guide.html" title="next chapter">Developer Guide</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, John Rusnak.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

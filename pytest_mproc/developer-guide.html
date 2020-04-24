@@ -1,0 +1,234 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Developer Guide &#8212; pytest_mproc  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to pytest_mproc’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="developer-guide">
+<h1>Developer Guide<a class="headerlink" href="#developer-guide" title="Permalink to this headline">¶</a></h1>
+<p>The packages for this pytest plugin are divided into three main modules:</p>
+<ol class="arabic simple">
+<li><p><em>coordinator</em> - for coordinating parallel execution from a coordinator process to multiple worker processes</p></li>
+<li><p><em>worker</em> - contains code for processing tests as they are popped off of the queue (a queue fed by the coordinator)</p></li>
+<li><p><em>plugin</em> - contains the pytest standard hooks for processing pytest arguments and performing actions at key
+points along the test execution flow</p></li>
+</ol>
+<p>The system starts by starting all threads (processes).  Each thread processes the list of tests available using
+standard pytest code.  This may seem inefficient in terms of CPU usage, but since processes are each on their own
+core, very little overall time is wasted.  The reason for doing this is that pytest items are not serializable to
+send across a queue, and so only test nodeid’s are sent for lookup by the worker node.</p>
+<p>The system functions by having the coordinator node push all tests to a queue shared with all workers.  The workers then
+grab the next available test from the queue for execution.  This pull model alleviates any additional work needed by
+the developer to figure out how to split up their tests for execution.  Ideally, longer running tests would be executed
+first and short tests run last, to best distribute the workload.</p>
+<div class="section" id="a-note-about-running-tests-for-pytest-mproc">
+<h2>A Note about Running Tests for pytest_mproc<a class="headerlink" href="#a-note-about-running-tests-for-pytest-mproc" title="Permalink to this headline">¶</a></h2>
+<p>Please note that one of the tests for this product is designed to fail deliberately.  This is to test that test
+status is reported properly for failed tests when using this pytest plugin.</p>
+</div>
+<div class="section" id="module-pytest_mproc.coordinator">
+<span id="coordinator"></span><h2>Coordinator<a class="headerlink" href="#module-pytest_mproc.coordinator" title="Permalink to this headline">¶</a></h2>
+<p>This package contains code to coordinate execution from a main thread to worker threads (processes)</p>
+<dl class="py class">
+<dt id="pytest_mproc.coordinator.Coordinator">
+<em class="property">class </em><code class="sig-prename descclassname">pytest_mproc.coordinator.</code><code class="sig-name descname">Coordinator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_processes</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.coordinator.Coordinator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context manager for kicking of worker Processes to conduct test execution via pytest hooks</p>
+<dl class="py method">
+<dt id="pytest_mproc.coordinator.Coordinator.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">session</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.coordinator.Coordinator.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Populate test queue and continue to process messages from worker Processes until they complete</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>session</strong> – Pytest test session, to get session or config information</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytest_mproc.coordinator.Coordinator.set_items">
+<code class="sig-name descname">set_items</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tests</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.coordinator.Coordinator.set_items" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tests</strong> – the items containing the pytest hooks to the tests to be run</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytest_mproc.coordinator.Coordinator.start">
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.coordinator.Coordinator.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start all worker processes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>this object</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pytest_mproc.worker">
+<span id="worker"></span><h2>Worker<a class="headerlink" href="#module-pytest_mproc.worker" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pytest_mproc.worker.WorkerSession">
+<em class="property">class </em><code class="sig-prename descclassname">pytest_mproc.worker.</code><code class="sig-name descname">WorkerSession</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span></em>, <em class="sig-param"><span class="n">result_q</span></em>, <em class="sig-param"><span class="n">test_generator</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.worker.WorkerSession" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles reporting of test status and the like</p>
+<dl class="py method">
+<dt id="pytest_mproc.worker.WorkerSession.pytest_collection_finish">
+<code class="sig-name descname">pytest_collection_finish</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">session</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.worker.WorkerSession.pytest_collection_finish" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invoked once pytest has collected all information about which tests to run.
+Those items are squirrelled away in a different attributes, and a generator
+is put in its place to draw from.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>session</strong> – the pytest session</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the generator of tests to run</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytest_mproc.worker.WorkerSession.pytest_runtest_logreport">
+<code class="sig-name descname">pytest_runtest_logreport</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">report</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.worker.WorkerSession.pytest_runtest_logreport" title="Permalink to this definition">¶</a></dt>
+<dd><p>report only status of calls (not setup or teardown), unless there was an error in those
+stash report for later end-game parsing of failures</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>report</strong> – report to draw info from</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytest_mproc.worker.WorkerSession.pytest_sessionfinish">
+<code class="sig-name descname">pytest_sessionfinish</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">exitstatus</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.worker.WorkerSession.pytest_sessionfinish" title="Permalink to this definition">¶</a></dt>
+<dd><p>output failure information and final exit status back to coordinator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>exitstatus</strong> – exit status of the test suite run</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytest_mproc.worker.WorkerSession.test_loop">
+<code class="sig-name descname">test_loop</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">session</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.worker.WorkerSession.test_loop" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is where the action takes place.  We override the usual implementation since
+that doesn’t support a dynamic generation of tests (whose source is the test Queue
+that it draws from to pick out the next test</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>session</strong> – Where the tests generator is kept</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">pytest_mproc</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Developer Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#a-note-about-running-tests-for-pytest-mproc">A Note about Running Tests for pytest_mproc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytest_mproc.coordinator">Coordinator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytest_mproc.worker">Worker</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to pytest_mproc’s documentation!</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, John Rusnak.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/developer-guide.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
