@@ -1,9 +1,9 @@
-.. pytest_mpdist documentation master file, created by
+.. pytest_mproc documentation master file, created by
    sphinx-quickstart on Sat Feb  8 16:47:29 2020.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to pytest_mpdist's documentation!
+Welcome to pytest_mproc's documentation!
 =========================================
 
 .. toctree::
@@ -23,15 +23,15 @@ Indices and tables
 Introduction
 ============
 
-Welcome to pytest-mpdist, a plugin for pytest to run distributed testing via multiprocessing.  This manner
+Welcome to pytest-mproc, a plugin for pytest to run distributed testing via multiprocessing.  This manner
 of distributed testing has several advantages, including more efficient execution over pytest-xdist in many cases.
 
 xdist works for cases perhaps where there are large number of tests, but the cost of overhead in using rsync and
 overall implementation prevents realization of test-execution-time gains that one might hope for.
 
-To begin using pytest mpdist, just install:
+To begin using pytest_mproc, just install:
 
-% pip install pytest-mpdist
+% pip install pytest-mproc
 
 
 Usage
@@ -46,6 +46,11 @@ or to specify use of all available cores:
 % pytest --cores auto [remaining arguments]
 
 You can also specify things like "auto*2" or "auto/2" for number of cores
+
+Disabling Mproc from Command Line
+=================================
+
+To disable mproc (overriding all other pytest-mproc-related flags), specify "--diable-mproc True" on the command line.
 
 Grouping Tests
 ==============
@@ -98,7 +103,7 @@ respectively, use fixture from the pytest_mproc_utils package:
 
 .. code-block:: python
 
-   from pytest_mproc utils import pytest_mproc_global_initializer, pytest_mproc_global_finalizer
+   from pytest_mproc.utils import global_initializer, global_finalizer
    @pytest_mproc_global_initializer
    def initualizer():
        pass
@@ -106,4 +111,28 @@ respectively, use fixture from the pytest_mproc_utils package:
    @pytest_mproc_global_finalizer
    def finalizer():
        pass
+
+Global Session Context Manager
+==============================
+
+Alternatively, you can use a context manager (either a function with a single yield or a class with __enter__ and __exit__ methods). The function,
+or the __init__ method in the case of a class, must not take any arguments.
+
+.. code-block:: python
+
+   from pytest_mproc.utils import global_session_context
+
+   @global_session_context
+   class ContextManager:
+
+       def __enter__(self):
+           # setup some resource globally once for all tests/processes being run
+           return self
+
+       def __exit__(self):
+           # teardown/shutdown resources set up on enter
+           pass
+
+
+
 
