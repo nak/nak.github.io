@@ -4,7 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Developer Guide &#8212; pytest_mproc  documentation</title>
+    <title>Developer Guide &#8212; pytest_mpdist  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -48,8 +48,8 @@ send across a queue, and so only test nodeid’s are sent for lookup by the work
 grab the next available test from the queue for execution.  This pull model alleviates any additional work needed by
 the developer to figure out how to split up their tests for execution.  Ideally, longer running tests would be executed
 first and short tests run last, to best distribute the workload.</p>
-<div class="section" id="a-note-about-running-tests-for-pytest-mproc">
-<h2>A Note about Running Tests for pytest_mproc<a class="headerlink" href="#a-note-about-running-tests-for-pytest-mproc" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="a-note-about-running-tests-for-pytest-mpdist">
+<h2>A Note about Running Tests for pytest_mpdist<a class="headerlink" href="#a-note-about-running-tests-for-pytest-mpdist" title="Permalink to this headline">¶</a></h2>
 <p>Please note that one of the tests for this product is designed to fail deliberately.  This is to test that test
 status is reported properly for failed tests when using this pytest plugin.</p>
 </div>
@@ -165,7 +165,7 @@ that it draws from to pick out the next test</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">pytest_mproc</a></h1>
+<h1 class="logo"><a href="index.html">pytest_mpdist</a></h1>
 
 
 
@@ -178,7 +178,7 @@ that it draws from to pick out the next test</p>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Developer Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#a-note-about-running-tests-for-pytest-mproc">A Note about Running Tests for pytest_mproc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#a-note-about-running-tests-for-pytest-mpdist">A Note about Running Tests for pytest_mpdist</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pytest_mproc.coordinator">Coordinator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pytest_mproc.worker">Worker</a></li>
 </ul>
