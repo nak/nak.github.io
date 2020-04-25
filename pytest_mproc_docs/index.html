@@ -108,42 +108,29 @@ same process/thread.  To do this, annotate each test using a unique name for the
 <p>This is useful if the tests are using a common resource for testing and parallelized execution of tests might
 result in interference.</p>
 </div>
-<div class="section" id="global-initializers-finalizers">
-<h1>Global Initializers/Finalizers<a class="headerlink" href="#global-initializers-finalizers" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="a-global-ly-scoped-fixture">
+<h1>A ‘global’-ly Scoped Fixture<a class="headerlink" href="#a-global-ly-scoped-fixture" title="Permalink to this headline">¶</a></h1>
+<p>As is the case with <em>pytest_xdist</em> plugin, <em>pytest_mproc</em> uses multiprocessing module to achieve parallel concurrency.  This
+raises interesting behaviors about ‘session’ scoped fixtures.  Each subprocess that is launched will create its own
+session-level fixture;  in other words, you can think of a session as a per-process concept, with one session-level
+fixture per process.  This is often not obvious to test developers. Many times, a global fixture is needed, with a
+single instantiation across all processes and tests.  An example might be setting up a single test database.</p>
+<p>To achieve this, <em>pytest_mproc</em> adds a new scope: ‘global’. Behind the scenes, the system uses pythons <em>multiprocessing</em>
+module’s BaseManager to provide this feature.  This is mostly transparent to the developer, with one notable exception.
+In order to communicate a fixture globally across multiple <a href="#id1"><span class="problematic" id="id2">*</span></a>Process*es, the object returned (or yielded) from a
+globally scoped fixture must be Picklable.</p>
+<p>The ‘global’ scope is a level above ‘session’ in the hierarchy.  That means that globally scoped fixtures can only
+depend on other globally scoped fixtures.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Much like pytest-xdist, session level variables are called once for EACH THREAD.  So if you run on 4 cores, each
-session-scoped fixture will run 4 times.  This is because forking is used to parallelize tests.</p>
+<p>Values returned or yielded from a fixture with scope’global’ must be picklable so as to be shared across multiple
+independent subprocesses.</p>
 </div>
-<p>To add an initializer and finalzier to be called only once before all tests execute and after all tests executed,
-respectively, use fixture from the pytest_mproc_utils package:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pytest_mproc.utils</span> <span class="kn">import</span> <span class="n">global_initializer</span><span class="p">,</span> <span class="n">global_finalizer</span>
-<span class="nd">@pytest_mproc_global_initializer</span>
-<span class="k">def</span> <span class="nf">initualizer</span><span class="p">():</span>
-    <span class="k">pass</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest</span>
 
-<span class="nd">@pytest_mproc_global_finalizer</span>
-<span class="k">def</span> <span class="nf">finalizer</span><span class="p">():</span>
-    <span class="k">pass</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="global-session-context-manager">
-<h1>Global Session Context Manager<a class="headerlink" href="#global-session-context-manager" title="Permalink to this headline">¶</a></h1>
-<p>Alternatively, you can use a context manager (either a function with a single yield or a class with __enter__ and __exit__ methods). The function,
-or the __init__ method in the case of a class, must not take any arguments.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pytest_mproc.utils</span> <span class="kn">import</span> <span class="n">global_session_context</span>
-
-<span class="nd">@global_session_context</span>
-<span class="k">class</span> <span class="nc">ContextManager</span><span class="p">:</span>
-
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># setup some resource globally once for all tests/processes being run</span>
-        <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># teardown/shutdown resources set up on enter</span>
-        <span class="k">pass</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;global&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">globally_scoped_fixture</span><span class="p">()</span>
+    <span class="o">...</span>
 </pre></div>
 </div>
 </div>
