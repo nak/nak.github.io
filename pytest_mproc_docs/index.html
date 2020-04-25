@@ -61,6 +61,22 @@ of distributed testing has several advantages, including more efficient executio
 overall implementation prevents realization of test-execution-time gains that one might hope for.</p>
 <p>To begin using pytest_mproc, just install:</p>
 <p>% pip install pytest-mproc</p>
+<p>Currently, <em>pytest_mproc</em> is only usable in the context of a single host with multiple cores, although future
+support may be added for distribute testing across multiple nodes.</p>
+</div>
+<div class="section" id="why-use-pytest-mproc-over-pytest-xdist">
+<h1>Why Use <em>pytest_mproc</em> over <em>pytest-xdist</em>?<a class="headerlink" href="#why-use-pytest-mproc-over-pytest-xdist" title="Permalink to this headline">¶</a></h1>
+<p><em>pytest_mproc</em> has several advantages over xdist, depending on your situation:</p>
+<ol class="arabic simple">
+<li><p>Overhead of startup is more efficient, and start-up time does not grow with increasing number of cores</p></li>
+</ol>
+<p>#. It uses a pull model, so that each worker pulls the next test from a master queue.  There is no need to figure
+out how to divy up the tests beforehand.  The disadvantage is that the developer needs to know how long roughly each
+test takes and prioritize the longer running tests first (<em>&#64;pytest.mark.tryfirst</em>) .
+#. It provides a ‘global’ scope test fixture to provide a single instance of a fixture across all tests, regardless of
+how many nodes
+#. It allows you to programatically group together a bunch of tests to run serially on a single worker process (and
+run these first)</p>
 </div>
 <div class="section" id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
