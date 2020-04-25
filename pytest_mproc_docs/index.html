@@ -172,12 +172,14 @@ while on that fixture.  Example code is shown blow</p>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">setup_resources</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Nont</span><span class="p">:</span>
          <span class="n">hostname</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="mi">32873</span>
+         <span class="c1"># service is started i the background so as not to hold up the system</span>
          <span class="bp">cls</span><span class="o">.</span><span class="n">_proc</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Procss</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
         <span class="o">...</span>
         <span class="k">return</span> <span class="n">hostname</span><span class="p">,</span> <span class="n">port</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">hostname</span><span class="p">:</span><span class="nb">str</span> <span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+         <span class="o">...</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_proc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Attempt top instantiate singleton more then once&quot;</span>
@@ -205,6 +207,8 @@ while on that fixture.  Example code is shown blow</p>
          <span class="k">yield</span> <span class="n">manager</span><span class="o">.</span><span class="n">hostname</span><span class="p">,</span> <span class="n">manager</span><span class="o">.</span><span class="n">port</span>
 </pre></div>
 </div>
+<p><em>pytest_mproc</em> guarantees that all fixtures are in place before worker clients in other processes access them, so as
+not to cause a race condition.</p>
 </div>
 </div>
 
