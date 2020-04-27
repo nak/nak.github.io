@@ -211,6 +211,14 @@ while on that fixture.  Example code is shown blow</p>
 not to cause a race condition.</p>
 </div>
 </div>
+<div class="section" id="a-safe-tmpdir-fixture">
+<h1>A Safe <em>tmpdir</em> Fixture<a class="headerlink" href="#a-safe-tmpdir-fixture" title="Permalink to this headline">¶</a></h1>
+<p><em>pytest_mproc</em> provides its own fixtures for creating temporary directories: <em>mp_tmpdir_factory</em>, a fixture with a
+“<em>create_tmpdir</em>” method for creating multiple temporary directories within a test procedure, and a
+<em>mp_tmpdi</em> directory for creating a single temporary directory.  Other plugins providing similar featurs can have
+race conditions causing intermittent (if infrequent) failures.  This plugin guarantees to be free of race conditions
+and safe in the context of <em>pytest_mproc</em>’s concrurrent test framework.</p>
+</div>
 
 
           </div>
