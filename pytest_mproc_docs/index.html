@@ -123,6 +123,26 @@ same process/thread.  To do this, annotate each test using a unique name for the
 </div>
 <p>This is useful if the tests are using a common resource for testing and parallelized execution of tests might
 result in interference.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Grouped tests are always placed at the front of the test queue  – i.e, always scheduled to run before</p>
+</div>
+<p>ungrouped tests</p>
+<div class="section" id="a-matter-of-priority">
+<h2>A Matter of Priority<a class="headerlink" href="#a-matter-of-priority" title="Permalink to this headline">¶</a></h2>
+<p>You can also specify a priority of scheduling for groups.  The group annotation takes an optional priority as
+the second argument:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest_mproc</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mpro</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;Prioritzed_Group&quot;</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_function</span><span class="p">():</span>
+   <span class="k">pass</span>
+</pre></div>
+</div>
+<p>Groups with lower interger priority value are scheduled before those with a higher priority value.  Thus, a
+group with priority <em>0</em> will be scheduled before a group with priority <em>1</em>.  The default priority is <em>0</em> if
+not specified.</p>
+</div>
 </div>
 <div class="section" id="a-global-ly-scoped-fixture">
 <h1>A ‘global’-ly Scoped Fixture<a class="headerlink" href="#a-global-ly-scoped-fixture" title="Permalink to this headline">¶</a></h1>
@@ -215,7 +235,7 @@ not to cause a race condition.</p>
 <h1>A Safe <em>tmpdir</em> Fixture<a class="headerlink" href="#a-safe-tmpdir-fixture" title="Permalink to this headline">¶</a></h1>
 <p><em>pytest_mproc</em> provides its own fixtures for creating temporary directories: <em>mp_tmpdir_factory</em>, a fixture with a
 “<em>create_tmpdir</em>” method for creating multiple temporary directories within a test procedure, and a
-<em>mp_tmpdi</em> directory for creating a single temporary directory.  Other plugins providing similar featurs can have
+<em>mp_tmpdir</em> directory for creating a single temporary directory.  Other plugins providing similar featurs can have
 race conditions causing intermittent (if infrequent) failures.  This plugin guarantees to be free of race conditions
 and safe in the context of <em>pytest_mproc</em>’s concrurrent test framework.</p>
 </div>
@@ -276,7 +296,7 @@ and safe in the context of <em>pytest_mproc</em>’s concrurrent test framework.
       &copy;2020, John Rusnak.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
