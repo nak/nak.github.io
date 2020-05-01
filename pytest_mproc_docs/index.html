@@ -239,6 +239,51 @@ not to cause a race condition.</p>
 race conditions causing intermittent (if infrequent) failures.  This plugin guarantees to be free of race conditions
 and safe in the context of <em>pytest_mproc</em>’s concrurrent test framework.</p>
 </div>
+<div class="section" id="advanced-testing-on-a-distributed-set-of-machines">
+<h1>Advanced: Testing on a Distributed Set of Machines<a class="headerlink" href="#advanced-testing-on-a-distributed-set-of-machines" title="Permalink to this headline">¶</a></h1>
+<p><em>pytest_mproc</em> has support for running test distributed across multiple mahcines.</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>This feature may not be as robust aginast fault tolerance.  The basic functionality exists, but robustness
+against exception in fixtures, etc., has not been fully tested</p>
+</div>
+<p>The concept is that one node will act as the master node, collecting and reporting test status, while all others
+will act as clients – executing tests and reporting status back the the master node.  To start the master node,
+use the “–as-server” command line argument, specifying the port the server will listen on:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>% pytest --num_cores &lt;N&gt; --as-server &lt;port&gt; ...
+</pre></div>
+</div>
+<p>If N is zero, the process will wait indefinitely for workers on other nodes to be created to do the testing.  In
+this case, not tests will be executed on the master node.  If N &gt; 0, then test execution will start immediately
+on the master node following test setup;  as workers on other nodes come on line, they will pull tests from those
+remaining the queue and execute in parallel to the master.</p>
+<p>To start the client nodes:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>% pytest --num_cores &lt;N&gt; --as-client &lt;host&gt;:&lt;port&gt;
+</pre></div>
+</div>
+<p>Here, N must be greater than or equal to 1;  multiple workers can be invoked on a node, with possibly multiple client
+nodes. The client will attempt to connect to the master for a period of 30 seconds at which point it gives up and
+exits with na error.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><em>pytest_mproc</em> does not have the facilities to launch testing on other external nodes.  The checkout of code on
+client machines and execution of the pytest command on client nodes falls outside of <em>pytest_mproc</em>’s scope</p>
+</div>
+<div class="section" id="node-scoped-fixtures">
+<h2>‘<em>node</em>’ Scoped Fixtures<a class="headerlink" href="#node-scoped-fixtures" title="Permalink to this headline">¶</a></h2>
+<p>With the system now allowing execution of mutliple workers on a single machine, and execution across multiple machines,
+this introduces a new level of scoping of fixtures:  <em>node</em>-scoped fixtures.  A fixture scoped to ‘<em>node</em>’ is
+instantiated once per node and such instance is only available to workers on that node.  The ‘<em>global</em>’-scoped fixtures
+still hold the meaning of being scoped to the entirety of testing, one instance available to all workers across all
+machines (so thinkg carefully about what you are providing in your <em>global</em> fixture!).</p>
+<p>To declare a fixture to be scoped to a node:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;node&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">node_scoped_fixture_function</span><span class="p">():</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+</div>
+</div>
 
 
           </div>

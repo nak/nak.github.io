@@ -58,7 +58,7 @@ status is reported properly for failed tests when using this pytest plugin.</p>
 <p>This package contains code to coordinate execution from a main thread to worker threads (processes)</p>
 <dl class="py class">
 <dt id="pytest_mproc.coordinator.Coordinator">
-<em class="property">class </em><code class="sig-prename descclassname">pytest_mproc.coordinator.</code><code class="sig-name descname">Coordinator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_processes</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.coordinator.Coordinator" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pytest_mproc.coordinator.</code><code class="sig-name descname">Coordinator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span><span class="p">:</span> <span class="n">pytest_mproc.config.MPManagerConfig</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.coordinator.Coordinator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Context manager for kicking of worker Processes to conduct test execution via pytest hooks</p>
 <dl class="py method">
 <dt id="pytest_mproc.coordinator.Coordinator.run">
@@ -83,7 +83,7 @@ status is reported properly for failed tests when using this pytest plugin.</p>
 
 <dl class="py method">
 <dt id="pytest_mproc.coordinator.Coordinator.start">
-<code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.coordinator.Coordinator.start" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mpconfig</span><span class="p">:</span> <span class="n">pytest_mproc.config.MPManagerConfig</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.coordinator.Coordinator.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start all worker processes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -99,7 +99,7 @@ status is reported properly for failed tests when using this pytest plugin.</p>
 <span id="worker"></span><h2>Worker<a class="headerlink" href="#module-pytest_mproc.worker" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytest_mproc.worker.WorkerSession">
-<em class="property">class </em><code class="sig-prename descclassname">pytest_mproc.worker.</code><code class="sig-name descname">WorkerSession</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span></em>, <em class="sig-param"><span class="n">result_q</span></em>, <em class="sig-param"><span class="n">test_generator</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.worker.WorkerSession" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pytest_mproc.worker.</code><code class="sig-name descname">WorkerSession</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span></em>, <em class="sig-param"><span class="n">result_q</span></em>, <em class="sig-param"><span class="n">test_generator</span></em>, <em class="sig-param"><span class="n">is_remote</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.worker.WorkerSession" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles reporting of test status and the like</p>
 <dl class="py method">
 <dt id="pytest_mproc.worker.WorkerSession.pytest_collection_finish">
