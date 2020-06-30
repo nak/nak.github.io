@@ -69,14 +69,15 @@ support may be added for distribute testing across multiple nodes.</p>
 <p><em>pytest_mproc</em> has several advantages over xdist, depending on your situation:</p>
 <ol class="arabic simple">
 <li><p>Overhead of startup is more efficient, and start-up time does not grow with increasing number of cores</p></li>
-</ol>
-<p>#. It uses a pull model, so that each worker pulls the next test from a master queue.  There is no need to figure
+<li><p>It uses a pull model, so that each worker pulls the next test from a master queue.  There is no need to figure
 out how to divy up the tests beforehand.  The disadvantage is that the developer needs to know how long roughly each
-test takes and prioritize the longer running tests first (<em>&#64;pytest.mark.tryfirst</em>) .
-#. It provides a ‘global’ scope test fixture to provide a single instance of a fixture across all tests, regardless of
-how many nodes
-#. It allows you to programatically group together a bunch of tests to run serially on a single worker process (and
-run these first)</p>
+test takes and prioritize the longer running tests first (<em>&#64;pytest.mark.tryfirst</em>) .</p></li>
+<li><p>It provides a ‘global’ scope test fixture to provide a single instance of a fixture across all tests, regardless of
+how many nodes</p></li>
+</ol>
+<p>#. It allows you to programatically group together a bunch of tests to run serially on a single worker process
+#  Support for execution across multiple machines
+#. It provides a better mechanism for prioritizing and configuring test execution</p>
 </div>
 <div class="section" id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
@@ -104,7 +105,7 @@ cores.</p>
 allowed during distributed processing.  The <em>multiprocessing</em> module can get bogged down and dwell on one thread or
 even deadlock when too many connection requests are made at one time to the main process.  To alleviate this,
 the number of allowed simultaneous connections is throttled, with a default of 24 maximum connections.  The user can
-over ride this using the <a href="#id1"><span class="problematic" id="id2">*</span></a>”–max-simultanous-connections” option.</p>
+over ride this using the <em>–max-simultanous-connections</em> option.</p>
 </div>
 <div class="section" id="grouping-tests">
 <h1>Grouping Tests<a class="headerlink" href="#grouping-tests" title="Permalink to this headline">¶</a></h1>
@@ -126,7 +127,7 @@ same process/thread.  To do this, annotate each test using a unique name for the
 <p>Likewise, you can use the same annotation on test class to group all test methods within that class:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest_mproc</span>
 
-<span class="n">TEST_GROUP_CLASSS</span> <span class="o">=</span> <span class="s2">&quot;class_group&quot;</span>
+<span class="n">TEST_GROUP_CLASS</span> <span class="o">=</span> <span class="n">GroupTag</span><span class="p">(</span><span class="s2">&quot;class_group&quot;</span><span class="p">)</span>
 
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mproc</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">TEST_GROUP_CLASS</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">TestClass</span><span class="p">:</span>
@@ -139,37 +140,55 @@ same process/thread.  To do this, annotate each test using a unique name for the
 </div>
 <p>This is useful if the tests are using a common resource for testing and parallelized execution of tests might
 result in interference.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Grouped tests are always placed at the front of the test queue  – i.e, always scheduled to run before</p>
+<div class="section" id="configuring-test-execution-of-groups">
+<h2>Configuring Test Execution of Groups<a class="headerlink" href="#configuring-test-execution-of-groups" title="Permalink to this headline">¶</a></h2>
+<p>As discussed below, <em>pytest_mproc</em> allows execution across multiple machines/indepenent processes.  There are two
+ways to specify how a group of tests will be executed by using the <em>restric_to</em> parameter of the
+<em>pytest_mproc.group</em> decorator.  This can take one of two values.</p>
+<ol class="arabic simple">
+<li><p><em>pytest_mproc.TestExecutionConstraint.SINGLE_PROCESS</em> - this is the default value.  This specifies that the tests
+are to run serially based on priority of tests within the group on a single core</p></li>
+<li><p><em>pytest_mproc.TestExecutionConstraint.SINGLE_NODE</em>  - This specifies that the group of tests are to run on a single
+node of the system, but within that node the set of tests can be distributed among the workers of that node</p></li>
+</ol>
+<p>If specifying <em>SINGLE_NODE</em> execution in the context of running a single <em>pytest</em> process (and therefore a single node),
+the only value provided is the ability to specify a hierarchy of priorities.</p>
 </div>
-<p>ungrouped tests</p>
+</div>
 <div class="section" id="a-matter-of-priority">
-<h2>A Matter of Priority<a class="headerlink" href="#a-matter-of-priority" title="Permalink to this headline">¶</a></h2>
-<p>You can also specify a priority of scheduling for groups.  The group annotation takes an optional priority as
-the second argument:</p>
+<h1>A Matter of Priority<a class="headerlink" href="#a-matter-of-priority" title="Permalink to this headline">¶</a></h1>
+<p>You can also specify a priority for test execution using the <em>pytest_mproc.priority</em> decorator:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest_mproc</span>
 
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mpro</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;Prioritzed_Group&quot;</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mpro</span><span class="o">.</span><span class="n">priority</span><span class="p">(</span><span class="n">pytest_mproc</span><span class="o">.</span><span class="n">DEFAULT_PRIORITY</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_function</span><span class="p">():</span>
    <span class="k">pass</span>
 </pre></div>
 </div>
 <p>Groups with lower interger priority value are scheduled before those with a higher priority value.  Thus, a
-group with priority <em>0</em> will be scheduled before a group with priority <em>1</em>.  The default priority is <em>0</em> if
-not specified.</p>
-</div>
+group with priority <em>pytest_mproc.DEFAULT_PRIORITY-1</em> will be scheduled before a group with priority
+<em>pytest_mproc.DEFAULT_PRIORITY-2</em>.  Of course, the default priority of <em>pytest_mproc.DEFAULT_PRIORITY</em>  is used if
+unspecified.</p>
+<p>Priorities should be specified to the default priority assigned to all tests without decorators, which can be
+obtained through the variable <em>pytest_mproc.DEFAULT_PRIORITY</em>.  When working with grouped tests as explained above,
+the priorities are scoped.  That is, at a global level, the priority of a group of tests will determine that group’s
+execution order relative to all other top-level tests or test groups. For tests within a group, the priority of each test
+will determine the order of execution only within that group.  <em>pytest_mproc</em> does not guarantee order of
+execution for tests or test groups with the same priority.</p>
+<p>If you specify a priorty at on a class of tests, all test methods within that class will have that priority, unless
+a specific priority is assigned to that method through its own decorator.  In that class, the decorator for the class
+method is used.</p>
 </div>
 <div class="section" id="a-global-ly-scoped-fixture">
 <h1>A ‘global’-ly Scoped Fixture<a class="headerlink" href="#a-global-ly-scoped-fixture" title="Permalink to this headline">¶</a></h1>
-<p>As is the case with <em>pytest_xdist</em> plugin, <em>pytest_mproc</em> uses multiprocessing module to achieve parallel concurrency.  This
-raises interesting behaviors about ‘session’ scoped fixtures.  Each subprocess that is launched will create its own
+<p>As is the case with <em>pytest_xdist</em> plugin, <em>pytest_mproc</em> uses multiprocessing module to achieve parallel concurrency.
+This raises interesting behaviors about ‘session’ scoped fixtures.  Each subprocess that is launched will create its own
 session-level fixture;  in other words, you can think of a session as a per-process concept, with one session-level
 fixture per process.  This is often not obvious to test developers. Many times, a global fixture is needed, with a
 single instantiation across all processes and tests.  An example might be setting up a single test database.</p>
 <p>To achieve this, <em>pytest_mproc</em> adds a new scope: ‘global’. Behind the scenes, the system uses pythons <em>multiprocessing</em>
 module’s BaseManager to provide this feature.  This is mostly transparent to the developer, with one notable exception.
-In order to communicate a fixture globally across multiple <a href="#id3"><span class="problematic" id="id4">*</span></a>Process*es, the object returned (or yielded) from a
+In order to communicate a fixture globally across multiple <em>Process</em> es, the object returned (or yielded) from a
 globally scoped fixture must be Picklable.</p>
 <p>The ‘global’ scope is a level above ‘session’ in the hierarchy.  That means that globally scoped fixtures can only
 depend on other globally scoped fixtures.</p>
