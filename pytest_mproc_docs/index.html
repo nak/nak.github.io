@@ -38,7 +38,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="developer-guide.html">Developer Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="developer-guide.html#a-note-about-running-tests-for-pytest-mproc">A Note about Running Tests for pytest_mproc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="developer-guide.html#module-pytest_mproc.coordinator">Coordinator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer-guide.html#coordinator">Coordinator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="developer-guide.html#module-pytest_mproc.worker">Worker</a></li>
 </ul>
 </li>
@@ -84,11 +84,27 @@ run these first)</p>
 <p>% pytest –cores 3 [remaining arguments]</p>
 <p>or to specify use of all available cores:</p>
 <p>% pytest –cores auto [remaining arguments]</p>
-<p>You can also specify things like “auto*2” or “auto/2” for number of cores</p>
+<p>You can also specify things like “auto*2” or “auto/2” for number of cores.</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Overscribing CPUs will cause additional overhead.  <em>pytest_mproc</em> kicks off all worker threads up front, and
+each worker does identical processing to independently come up with the list of tests.  When the number of
+threads is less than or equal to the number of cores (“a batch”), this adds little overhead.  Once beyond that, each
+additional (partial) batch will add more overhead, as the CPU must be split across multiple threads for some or all
+cores.</p>
+</div>
 </div>
 <div class="section" id="disabling-mproc-from-command-line">
 <h1>Disabling Mproc from Command Line<a class="headerlink" href="#disabling-mproc-from-command-line" title="Permalink to this headline">¶</a></h1>
 <p>To disable mproc (overriding all other pytest-mproc-related flags), specify “–diable-mproc True” on the command line.</p>
+</div>
+<div class="section" id="command-line-configuration-options">
+<h1>Command Line Configuration Options<a class="headerlink" href="#command-line-configuration-options" title="Permalink to this headline">¶</a></h1>
+<p>Aside from specifying the number of cores, the user can optionally specify the maximum number of active connections
+allowed during distributed processing.  The <em>multiprocessing</em> module can get bogged down and dwell on one thread or
+even deadlock when too many connection requests are made at one time to the main process.  To alleviate this,
+the number of allowed simultaneous connections is throttled, with a default of 24 maximum connections.  The user can
+over ride this using the <a href="#id1"><span class="problematic" id="id2">*</span></a>”–max-simultanous-connections” option.</p>
 </div>
 <div class="section" id="grouping-tests">
 <h1>Grouping Tests<a class="headerlink" href="#grouping-tests" title="Permalink to this headline">¶</a></h1>
@@ -153,7 +169,7 @@ fixture per process.  This is often not obvious to test developers. Many times, 
 single instantiation across all processes and tests.  An example might be setting up a single test database.</p>
 <p>To achieve this, <em>pytest_mproc</em> adds a new scope: ‘global’. Behind the scenes, the system uses pythons <em>multiprocessing</em>
 module’s BaseManager to provide this feature.  This is mostly transparent to the developer, with one notable exception.
-In order to communicate a fixture globally across multiple <a href="#id1"><span class="problematic" id="id2">*</span></a>Process*es, the object returned (or yielded) from a
+In order to communicate a fixture globally across multiple <a href="#id3"><span class="problematic" id="id4">*</span></a>Process*es, the object returned (or yielded) from a
 globally scoped fixture must be Picklable.</p>
 <p>The ‘global’ scope is a level above ‘session’ in the hierarchy.  That means that globally scoped fixtures can only
 depend on other globally scoped fixtures.</p>
@@ -244,25 +260,31 @@ and safe in the context of <em>pytest_mproc</em>’s concrurrent test framework.
 <p><em>pytest_mproc</em> has support for running test distributed across multiple mahcines.</p>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
-<p>This feature may not be as robust aginast fault tolerance.  The basic functionality exists, but robustness
+<p>This feature may not be as robust against fault tolerance.  The basic functionality exists, but robustness
 against exception in fixtures, etc., has not been fully tested</p>
 </div>
-<p>The concept is that one node will act as the master node, collecting and reporting test status, while all others
-will act as clients – executing tests and reporting status back the the master node.  To start the master node,
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Throttling of connections only happens on a per-node basis, not globally.  It may be possible to overwhelm
+the main node if you are using too many remote workers, causing deadlock</p>
+</div>
+<p>The concept is that one node will act as the main node, collecting and reporting test status, while all others
+will act as clients – executing tests and reporting status back the the main node.  To start the main node,
 use the “–as-server” command line argument, specifying the port the server will listen on:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>% pytest --num_cores &lt;N&gt; --as-server &lt;port&gt; ...
 </pre></div>
 </div>
-<p>If N is zero, the process will wait indefinitely for workers on other nodes to be created to do the testing.  In
-this case, not tests will be executed on the master node.  If N &gt; 0, then test execution will start immediately
-on the master node following test setup;  as workers on other nodes come on line, they will pull tests from those
-remaining the queue and execute in parallel to the master.</p>
+<p>When <em>–as-server</em> argument is presnt, N may be zero, indicating
+the process will wait indefinitely for workers on other nodes to be created to do the testing.  In
+this case, not tests will be executed on the main node.  If N &gt; 0, then test execution will start immediately
+on the main node following test setup;  as workers on other nodes come on line, they will pull tests from those
+remaining the queue and execute in parallel to the main.</p>
 <p>To start the client nodes:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>% pytest --num_cores &lt;N&gt; --as-client &lt;host&gt;:&lt;port&gt;
 </pre></div>
 </div>
 <p>Here, N must be greater than or equal to 1;  multiple workers can be invoked on a node, with possibly multiple client
-nodes. The client will attempt to connect to the master for a period of 30 seconds at which point it gives up and
+nodes. The client will attempt to connect to the main  node for a period of 30 seconds at which point it gives up and
 exits with na error.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -270,7 +292,7 @@ exits with na error.</p>
 client machines and execution of the pytest command on client nodes falls outside of <em>pytest_mproc</em>’s scope</p>
 </div>
 <div class="section" id="node-scoped-fixtures">
-<h2>‘<em>node</em>’ Scoped Fixtures<a class="headerlink" href="#node-scoped-fixtures" title="Permalink to this headline">¶</a></h2>
+<h2>Node Scoped Fixtures<a class="headerlink" href="#node-scoped-fixtures" title="Permalink to this headline">¶</a></h2>
 <p>With the system now allowing execution of mutliple workers on a single machine, and execution across multiple machines,
 this introduces a new level of scoping of fixtures:  <em>node</em>-scoped fixtures.  A fixture scoped to ‘<em>node</em>’ is
 instantiated once per node and such instance is only available to workers on that node.  The ‘<em>global</em>’-scoped fixtures

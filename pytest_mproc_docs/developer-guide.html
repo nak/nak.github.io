@@ -53,53 +53,14 @@ first and short tests run last, to best distribute the workload.</p>
 <p>Please note that one of the tests for this product is designed to fail deliberately.  This is to test that test
 status is reported properly for failed tests when using this pytest plugin.</p>
 </div>
-<div class="section" id="module-pytest_mproc.coordinator">
-<span id="coordinator"></span><h2>Coordinator<a class="headerlink" href="#module-pytest_mproc.coordinator" title="Permalink to this headline">¶</a></h2>
-<p>This package contains code to coordinate execution from a main thread to worker threads (processes)</p>
-<dl class="py class">
-<dt id="pytest_mproc.coordinator.Coordinator">
-<em class="property">class </em><code class="sig-prename descclassname">pytest_mproc.coordinator.</code><code class="sig-name descname">Coordinator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span><span class="p">:</span> <span class="n">pytest_mproc.config.MPManagerConfig</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.coordinator.Coordinator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Context manager for kicking of worker Processes to conduct test execution via pytest hooks</p>
-<dl class="py method">
-<dt id="pytest_mproc.coordinator.Coordinator.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">session</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.coordinator.Coordinator.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Populate test queue and continue to process messages from worker Processes until they complete</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>session</strong> – Pytest test session, to get session or config information</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pytest_mproc.coordinator.Coordinator.set_items">
-<code class="sig-name descname">set_items</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tests</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.coordinator.Coordinator.set_items" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tests</strong> – the items containing the pytest hooks to the tests to be run</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pytest_mproc.coordinator.Coordinator.start">
-<code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mpconfig</span><span class="p">:</span> <span class="n">pytest_mproc.config.MPManagerConfig</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.coordinator.Coordinator.start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Start all worker processes</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>this object</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="coordinator">
+<h2>Coordinator<a class="headerlink" href="#coordinator" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-pytest_mproc.worker">
 <span id="worker"></span><h2>Worker<a class="headerlink" href="#module-pytest_mproc.worker" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytest_mproc.worker.WorkerSession">
-<em class="property">class </em><code class="sig-prename descclassname">pytest_mproc.worker.</code><code class="sig-name descname">WorkerSession</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span></em>, <em class="sig-param"><span class="n">result_q</span></em>, <em class="sig-param"><span class="n">test_generator</span></em>, <em class="sig-param"><span class="n">is_remote</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.worker.WorkerSession" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pytest_mproc.worker.</code><code class="sig-name descname">WorkerSession</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span></em>, <em class="sig-param"><span class="n">host</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">port</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">test_q</span><span class="p">:</span> <span class="n">multiprocessing.context.BaseContext.JoinableQueue</span></em>, <em class="sig-param"><span class="n">result_q</span><span class="p">:</span> <span class="n">multiprocessing.context.BaseContext.Queue</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.worker.WorkerSession" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles reporting of test status and the like</p>
 <dl class="py method">
 <dt id="pytest_mproc.worker.WorkerSession.pytest_collection_finish">
@@ -136,6 +97,28 @@ stash report for later end-game parsing of failures</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>exitstatus</strong> – exit status of the test suite run</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytest_mproc.worker.WorkerSession.start">
+<em class="property">classmethod </em><code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">host</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">port</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">start_sem</span><span class="p">:</span> <span class="n">multiprocessing.context.BaseContext.Semaphore</span></em>, <em class="sig-param"><span class="n">fixture_sem</span><span class="p">:</span> <span class="n">multiprocessing.context.BaseContext.Semaphore</span></em>, <em class="sig-param"><span class="n">test_q</span><span class="p">:</span> <span class="n">multiprocessing.context.BaseContext.JoinableQueue</span></em>, <em class="sig-param"><span class="n">result_q</span><span class="p">:</span> <span class="n">multiprocessing.context.BaseContext.Queue</span></em>, <em class="sig-param"><span class="n">node_port</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; multiprocessing.context.Process<a class="headerlink" href="#pytest_mproc.worker.WorkerSession.start" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> – index of worker being created</p></li>
+<li><p><strong>host</strong> – host name of main multiprocessing manager</p></li>
+<li><p><strong>port</strong> – port of main mp manqager</p></li>
+<li><p><strong>start_sem</strong> – gating semaphore used to control # of simultaneous connections (prevents deadlock)</p></li>
+<li><p><strong>fixture_sem</strong> – gating semaphore when querying for test fixtures</p></li>
+<li><p><strong>test_q</strong> – Queue to pull from to get next test to run</p></li>
+<li><p><strong>result_q</strong> – Queue to place results</p></li>
+<li><p><strong>node_port</strong> – port node of localhost manager for node-level fixtures, etc</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Process created for new worker</p>
 </dd>
 </dl>
 </dd></dl>
@@ -179,7 +162,7 @@ that it draws from to pick out the next test</p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Developer Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#a-note-about-running-tests-for-pytest-mproc">A Note about Running Tests for pytest_mproc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-pytest_mproc.coordinator">Coordinator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#coordinator">Coordinator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pytest_mproc.worker">Worker</a></li>
 </ul>
 </li>
