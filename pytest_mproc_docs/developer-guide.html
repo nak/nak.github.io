@@ -53,8 +53,26 @@ first and short tests run last, to best distribute the workload.</p>
 <p>Please note that one of the tests for this product is designed to fail deliberately.  This is to test that test
 status is reported properly for failed tests when using this pytest plugin.</p>
 </div>
-<div class="section" id="coordinator">
-<h2>Coordinator<a class="headerlink" href="#coordinator" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pytest_mproc.coordinator">
+<span id="coordinator"></span><h2>Coordinator<a class="headerlink" href="#module-pytest_mproc.coordinator" title="Permalink to this headline">¶</a></h2>
+<p>This package contains code to coordinate execution from a main thread to worker threads (processes)</p>
+<dl class="py class">
+<dt id="pytest_mproc.coordinator.Coordinator">
+<em class="property">class </em><code class="sig-prename descclassname">pytest_mproc.coordinator.</code><code class="sig-name descname">Coordinator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_processes</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">host</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">port</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">max_simultaneous_connections</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">is_local</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_mproc.coordinator.Coordinator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context manager for kicking of worker Processes to conduct test execution via pytest hooks</p>
+<dl class="py method">
+<dt id="pytest_mproc.coordinator.Coordinator.start">
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">test_q</span><span class="p">:</span> <span class="n">multiprocessing.context.BaseContext.JoinableQueue</span></em>, <em class="sig-param"><span class="n">result_q</span><span class="p">:</span> <span class="n">multiprocessing.context.BaseContext.Queue</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pytest_mproc.coordinator.Coordinator.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start all worker processes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>this object</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-pytest_mproc.worker">
 <span id="worker"></span><h2>Worker<a class="headerlink" href="#module-pytest_mproc.worker" title="Permalink to this headline">¶</a></h2>
@@ -162,7 +180,7 @@ that it draws from to pick out the next test</p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Developer Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#a-note-about-running-tests-for-pytest-mproc">A Note about Running Tests for pytest_mproc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#coordinator">Coordinator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytest_mproc.coordinator">Coordinator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pytest_mproc.worker">Worker</a></li>
 </ul>
 </li>
