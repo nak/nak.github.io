@@ -1,18 +1,14 @@
-.. bantam documentation master file, created by
-   sphinx-quickstart on Tue Dec 29 14:23:26 2020.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Welcome to Bantam's Documentation!
-==================================
+Welcome to pytest_mproc's documentation!
+=========================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   developer-guide
 
 
-Indices and Tables
+Indices and tables
 ==================
 
 * :ref:`genindex`
@@ -22,245 +18,324 @@ Indices and Tables
 Introduction
 ============
 
-.. automodule:: bantam.web
+Welcome to *pytest_mproc*, a plugin for pytest to run distributed testing via multiprocessing.  This manner
+of distributed testing has several advantages, including more efficient execution over pytest-xdist in many cases.
 
-The specific WebApplication API is simple, and only the *start* method is of importance:
+xdist works for cases perhaps where there are large number of tests, but the cost of overhead in using rsync and
+overall implementation prevents realization of test-execution-time gains that one might hope for.
 
-.. autoclass:: bantam.web.WebApplication
-    :members: DuplicateRoute, start
+To begin using pytest_mproc, just install:
 
+% pip install pytest-mproc
 
-Client-Side Code Generation
----------------------------
+*pytest_mproc* is usable in the context of a single host with multiple cores, as well as execution across a distributed
+set of machines.
 
-.. automodule:: bantam.js
+Why Use *pytest_mproc* over *pytest-xdist*?
+===========================================
 
-Generation on the fly
-*********************
+*pytest_mproc* has several advantages over xdist, depending on your situation:
 
-As an even greater convenience, the code can be generated on the fly, when the *WebApplication* is created.
-By providing two parameters to the init call to your *WebApplication*:
-
-* *static_path*: the root path to serve static files
-* *js_bundle_name*: the name (**without** extension) of the javascript bundle file
-
-the javascript code will be (re)generated just before startup of the server.  The javascript file that provides
-the web API on the client side will then be available under the static route */static/js/<js-bundle-name>.js*.
-
-In the example above the instantiations of the *app* would be:
-
-.. code-block:: python
-
-    app = WebApplication(static_path=Path("./static"), js_bundle_name='salutations')
-
-The client interface is then available through:
-
-* http://localhost:8080/static/js/salutations.js
+#. Overhead of startup is more efficient, and start-up time does not grow with increasing number of cores
+#. It uses a pull model, so that each worker pulls the next test from a master queue.  There is no need to figure
+   out how to divy up the tests beforehand.  The disadvantage is that the developer needs to know how long roughly each
+   test takes and prioritize the longer running tests first.
+#. It provides a 'global' scope test fixture to provide a single instance of a fixture across all tests, regardless of
+   how many nodes
+#. It allows you to programatically group together a bunch of tests to run serially on a single worker process
+#.  Support for execution across multiple machines
+#. It provides a better mechanism for prioritizing and configuring test execution
 
 
-Through a simple normal declaration of an API in the Python code, and auto-generation of client code, the developer
-is free to ignore the details of the inner works of routes and HTTP transactions.
+Usage
+=====
 
+To use with pytest, you use the -C or equivalently --cores argument to specify how many cores to run on:
 
-Optional Parameters
--------------------
+% pytest --cores 3 [remaining arguments]
 
-If default parameter values are provided, they are optionally provided on the javascript client-side as well.
-Additionally, to refine the second rule of declaring a web API above, the type for a parameter can also be
-declared as an Optional to any the types declared there. Provided a default value, include *None*, is provided.
+or to specify use of all available cores:
 
-Streamed Responses
-------------------
+% pytest --cores auto [remaining arguments]
 
-Responses can be streamed back to the client.  To do so, the underlying Python server call must be written as
-an *AsyncGenerator*, returning a type *AsyncGenerator[None, <int, float, bool, str, or bytes>]*.   (Thus, ammending
-the rule of allowed return values above).  Consider this example of a PoetryReader class:
-
-.. code-block:: python
-    :caption: Example of server code to stream a poem back to the client
-
-    import asyncio
-    import os
-
-    from bantam.decorators import RestMethod
-    from bantam.web import WebApplication, web_api
-    from typing import AsyncGenerator
-
-    class PoetryReader:
-        POEM = """
-        Mary had a little lamb...
-        Its fleece was white as snow...
-        Everywhere that Mary went...
-        Her lamb was sure to go...
-        """
-
-        @web_api(content_type='text/streamed', method=RestMethod.POST)
-        @staticmethod
-        async def read_poem() -> AsyncGenerator[None, str]:
-            for line in PoetryReader.POEM.strip().splitlines():
-                yield line
-                await asyncio.sleep(2)  # for dramatic effect
-            yield "THE END"
-            await asyncio.sleep(2)
-
-    if __name__ == '__main__':
-        app = WebApplication(static_path=os.path.dirname(__file__), js_bundle_name='poetry_reader')
-        asyncio.get_event_loop().run_until_complete(app.start())  # default to localhost HTTP on port 8080
-
+You can also specify things like "auto*2" or "auto/2" for number of cores.
 
 .. caution::
-    The method must be declared as POST to work consistently across different machines/web browsers
+   Overscribing CPUs will cause additional overhead.  *pytest_mproc* kicks off all worker threads up front, and
+   each worker does identical processing to independently come up with the list of tests.  When the number of
+   threads is less than or equal to the number of cores ("a batch"), this adds little overhead.  Once beyond that, each
+   additional (partial) batch will add more overhead, as the CPU must be split across multiple threads for some or all
+   cores.
+
+Disabling *pytest_mproc* from Command Line
+==========================================
+
+To disable mproc (overriding all other pytest-mproc-related flags), specify "--diable-mproc True" on the command line.
+
+Top-Level Command Line Configuration Options
+============================================
+
+Aside from specifying the number of cores, the user can optionally specify the maximum number of active connections
+allowed during distributed processing.  The *multiprocessing* module can get bogged down and dwell on one thread or
+even deadlock when too many connection requests are made at one time to the main process.  To alleviate this,
+the number of allowed simultaneous connections is throttled, with a default of 24 maximum connections.  The user can
+over ride this using the *--max-simultanous-connections* option.
 
 
-The javascript generated for such an API is the same, with the exception that the *onsuccess* callback will be
-named *onreceive* and will be called with two parameters.  The first is the "chunk" that is read and the second
-is a boolean indicating whether it is the final one or not.  The "chunks" are determine by the type yielded by
-the generator:
+Grouping Tests
+==============
 
-* for numeric or *bool* types: each number yielded will invoke a single callback to *onreceive*.  But be aware that multiple
-     values can be sent at a time and that the generated javascript code will handle the logic to split them up.
-     This is particularly true when there is no or short sleep periods between yields.
-* for *str* type: *onreceive* will be called for each line received, guaranteeing whole lines are provided
-* for *bytes* type: *cnreceive* will be called for each chunk of bytes received, regardless of size
-
-Here is a bit of HTML to implement the client-side:
-
-.. code-block:: html
-   :caption: HTML containing client-side code for handling streaming responses
-
-    <html>
-    <head>
-        <script src="/static/js/poetry_reader.js" ></script>
-    </head>
-    <body>
-    <div id='poem'></div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function(event) {
-
-            let reader = new bantam.__main__.PoetryReader("http://localhost:8080");
-            let html = ""
-            let onreceive = function(line, is_done){
-                 html += "<p>" + line + "</p><br/>";
-                 document.getElementById('poem').innerHTML = html;
-            }
-            reader.read_poem(onreceive, function(code, reason){
-                alert("UNEXPECTED ERROR OCCURRED: " + code + " : " + reason);
-            });
-        });
-    </script>
-    </body>
-    </html>
-
-Loading the page http://localhost:8080/static/index.html will execute the code.
-
-Streaming Requests
-==================
-You can also make requests that stream (upload) data to the server.  Here again, we add two more (final) allowable
-types for parameters that specify a parameter provides an (async) iterator for lopping over and sending data chunk
-by chunk:
-
-* *bantam.web.AsyncLineGIterator*: specifies that the client will send *str* data to the server line by line (without
-  any return character present in the line)
-* *bantam.web.AsyncChunkIterator*: specifies that the iterator will send *bytes* of data to the server
-
-.. caution::
-   At most one parameter may be specified as an iterator type
-
-Here is what a web API method would look like that captures uploaded byts of data to a file and reports progress
-back to the client:
-
-.. code-block:: python
-   :caption: Example code for Python web API method that streams data
-
-    class Uploader:
-        @web_api(content_type='text/html')
-        @staticmethod
-        async def receive_streamed_data(size: int, byte_data: AsyncChunkGenerator) -> AsyncGenerator[None, float]
-            bytes_received: int = 0
-            packet_size = 100 # bytes
-            with open('some_file_path', 'bw') as f:
-                async for data in byte_data(packet_size):
-                    f.write(byte_data)
-                    bytes_received += len(byte_data)
-                    progress = bytes_received*100/size
-                    yield progress
-
-
-As a side note, when a streaming parameter is specified, all others will be sent as query parameters even when the request is
-POST.  Note that for chunk iterators, the parameter byte_data will be a callable that takes a single parameter,
-which is the max size of packet to be read each chunk.  The line iterator will be a simple iterator, not a callable.
-That is for a line itertor the Python code would look like:
+By default all tests are assumed independently runnable and isolated from one another.  That is the order in which they
+run within which process does not matter.  You may wish to specify a group of tests that must run serially within the
+same process/thread.  To do this, annotate each test using a unique name for the group:
 
 .. code-block:: python
 
-    ...
-    class Uploader:
-        @web_api(content_type='text/html')
-        @staticmethod
-        async def receive_streamed_data(size: int, line_by_line: AsyncLineGenerator) -> AsyncGenerator[None, float]
+   import pytest_mproc
+   TEST_GROUP1 = "group1"
+
+   @pytest_mproc.group(TEST_GROUP1)
+   def test_something1():
+        pass
+
+   @pytest_mproc.group(TEST_GROUP1)
+   def test_something2():
+        pass
+
+Likewise, you can use the same annotation on test class to group all test methods within that class:
+
+.. code-block:: python
+
+   import pytest_mproc
+
+   TEST_GROUP_CLASS = GroupTag("class_group")
+
+   @pytest.mproc.group(TEST_GROUP_CLASS)
+   class TestClass:
+       def test_method1(self):
+          pass
+
+       def test_method2(self):
+          pass
+
+This is useful if the tests are using a common resource for testing and parallelized execution of tests might
+result in interference.
+
+
+Configuring Test Execution of Groups
+------------------------------------
+
+As discussed below, *pytest_mproc* allows execution across multiple machines/indepenent processes.  There are two
+ways to specify how a group of tests will be executed by using the *restric_to* parameter of the
+*pytest_mproc.group* decorator.  This can take one of two values.
+
+#. *pytest_mproc.TestExecutionConstraint.SINGLE_PROCESS* - this is the default value.  This specifies that the tests
+   are to run serially based on priority of tests within the group on a single core
+#. *pytest_mproc.TestExecutionConstraint.SINGLE_NODE*  - This specifies that the group of tests are to run on a single
+   node of the system, but within that node the set of tests can be distributed among the workers of that node
+
+If specifying *SINGLE_NODE* execution in the context of running a single *pytest* process (and therefore a single node),
+the only value provided is the ability to specify a hierarchy of priorities.
+
+
+A Matter of Priority
+====================
+You can also specify a priority for test execution using the *pytest_mproc.priority* decorator:
+
+.. code-block:: python
+
+   import pytest_mproc
+
+   @pytest.mpro.priority(pytest_mproc.DEFAULT_PRIORITY - 2)
+   def test_function():
+      pass
+
+Groups with lower interger priority value are scheduled before those with a higher priority value.  Thus, a
+group with priority *pytest_mproc.DEFAULT_PRIORITY-1* will be scheduled before a group with priority
+*pytest_mproc.DEFAULT_PRIORITY-2*.  Of course, the default priority of *pytest_mproc.DEFAULT_PRIORITY*  is used if
+unspecified.
+
+Priorities should be specified to the default priority assigned to all tests without decorators, which can be
+obtained through the variable *pytest_mproc.DEFAULT_PRIORITY*.  When working with grouped tests as explained above,
+the priorities are scoped.  That is, at a global level, the priority of a group of tests will determine that group's
+execution order relative to all other top-level tests or test groups. For tests within a group, the priority of each test
+will determine the order of execution only within that group.  *pytest_mproc* does not guarantee order of
+execution for tests or test groups with the same priority.
+
+If you specify a priorty on a class of tests, all test methods within that class will have that priority, unless
+a specific priority is assigned to that method through its own decorator.  In that class, the decorator for the class
+method is used.
+
+
+A 'global'-ly Scoped Fixture
+============================
+
+As is the case with *pytest_xdist* plugin, *pytest_mproc* uses multiprocessing module to achieve parallel concurrency.
+This raises interesting behaviors about 'session' scoped fixtures.  Each subprocess that is launched will create its own
+session-level fixture;  in other words, you can think of a session as a per-process concept, with one session-level
+fixture per process.  This is often not obvious to test developers. Many times, a global fixture is needed, with a
+single instantiation across all processes and tests.  An example might be setting up a single test database.
+(NOTE: when running on more than one machine, also see 'node-level' fixtures discussed below)
+
+To achieve this, *pytest_mproc* adds a new scope: 'global'. Behind the scenes, the system uses pythons *multiprocessing*
+module's BaseManager to provide this feature.  This is mostly transparent to the developer, with one notable exception.
+In order to communicate a fixture globally across multiple *Process* es, the object returned (or yielded) from a
+globally scoped fixture must be 'picklable'.
+
+The 'global' scope is a level above 'session' in the hierarchy.  That means that globally scoped fixtures can only
+depend on other globally scoped fixtures.
+
+.. warning::
+    Values returned or yielded from a fixture with scope'global' must be picklable so as to be shared across multiple
+    independent subprocesses.
+
+
+.. code-block:: python
+
+   import pytest
+
+   @pytest.fixture(scope='global')
+   def globally_scoped_fixture()
+       ...
+
+
+Tips for Using Global Scope Fixture
+-----------------------------------
+Admittedly, one has to think about how multiprocessing works to know what can and cannot be returned from a global
+test fixture.  Since they are "singletons", one useful tip if you are using (singleton) classes (such as manager classses) to
+encaspulate logic, it is best not to put anything other than what is necessary as instance variables, and delegate
+them to class variable.  Also, you should design your fixture so that any other test not depending on it is not blocked
+while on that fixture.  Example code is shown blow
+
+
+.. code-block:: python
+
+   import pytest
+   import multiprocessing
+
+   class Manager:
+
+        # not picklable, so keep at class level
+       _proc: multiprocessing.Process = None
+
+       @staticmethod
+       def start(hostname: str, port: int) -> Nont:
+           ...
+           start_some_service(hostname, port)
+
+       @classmethod
+       def setup_resources(cls) -> Nont:
+            hostname, port = '127.0.0.1', 32873
+            # service is started i the background so as not to hold up the system
+            cls._proc = multiprocessing.Procss(target=start, args=(hostname, port))
+           ...
+           return hostname, port
+
+       @classmethod
+       def shutdown(cls, hostname:str , port: int) -> None:
             ...
-            with open('some_file_path', 'bw') as f:
-                async for data in line_by_line:  #<====  NOT a function call as in AsyncChunkIterator
-                   ...
+
+       def __init__(self):
+           assert self._proc is not None, "Attempt top instantiate singleton more then once"
+           # hostname and port are a str and int so easily Picklable
+           self._hostname, self._port = self.setup_resources()
+
+       def __enter__() -> "Manager":
+           return self
+
+       def __exit__(self, *args, **kargs):
+           self.shudown(self._hostname, self._port)
+           self._proc.join(timeout=5)
+
+       def hostname(self):
+            return self._hostname
+
+        def port(self):
+            return self._port
 
 
-On the client side, the signature of the API will look similar, with the *onsuccess* (*onreceive* if the
-response is also streaming) and *onerror* callbacks act the same.  The differences are that:
-
-#. the parameter that is the AsyncLine[Chunk]Iterator will not be present in the signature
-#. insted, the javascript API call will return a function to be called by the client to send each chunk of data (ad
-   the first and only parameter of the function)
-
-An example of uploading a file using the above api (assuming the Uploader class belongs to the module *uploads*):
-
-.. code-block:: javascript
-
-     ...
-     let onreceive = function(progress, is_done){
-        ...
-     }
-     let onerror = function(code, reason){
-        ...
-     }
-     let uploader = bantam.uploads.Uploader(site_url)
-     let size_of_upload = 1024*1024;  // bytes
-     let send_byte_data = uploader.receive_streamed_data(onreceive, onerror, size_of_upload)
-     const reader = new FileReader();
-     reader.addEventListener('load', (event) => {
-         send_byte_data(event.target.result);
-     });
-     reader.readAsText(file); // assumng file is a file object created prior to this code
+    @pytest.fixture(scope='global')
+    def resource():
+        # called only once across all processes and for all tests
+        with Manager() as manager:
+            yield manager.hostname, manager.port
 
 
-Pre-Processing Requests & Post-Processing Responses
-===================================================
+*pytest_mproc* guarantees that all fixtures are in place before worker clients in other processes access them, so as
+not to cause a race condition.
 
-You can pre-process requests before a call is made to the underlying Python web API. Likewise, you can modify
-responses returned from a Python web API call before it is sent to the client.  There are two means to do so.
-One is at the application level, by calling *set_preprocessor* and *set_postprocessor* accordingly:
+A Safe *tmpdir* Fixture
+=======================
+
+*pytest_mproc* provides its own fixtures for creating temporary directories: *mp_tmpdir_factory*, a fixture with a
+"*create_tmpdir*" method for creating multiple temporary directories within a test procedure, and a
+*mp_tmpdir* directory for creating a single temporary directory.  Other plugins providing similar featurs can have
+race conditions causing intermittent (if infrequent) failures.  This plugin guarantees to be free of race conditions
+and safe in the context of *pytest_mproc*'s concrurrent test framework.
+
+Advanced: Testing on a Distributed Set of Machines
+==================================================
+
+*pytest_mproc* has support for running test distributed across multiple mahcines.
+
+.. caution::
+   This feature may not be as robust against fault tolerance.  The basic functionality exists, but robustness
+   against exception in fixtures, etc., has not been fully tested
+
+.. caution::
+   Throttling of connections only happens on a per-node basis, not globally.  It may be possible to overwhelm
+   the main node if you are using too many remote workers, causing deadlock
+
+The concept is that one node will act as the main node, collecting and reporting test status, while all others
+will act as clients -- executing tests and reporting status back the the main node.  To start the main node,
+use the "--as-server" command line argument, specifying the port the server will listen on:
+
+.. code-block:: shell
+
+   % pytest --num_cores <N> --as-server <port> ...
+
+When *--as-server* argument is presnt, N may be zero, indicating
+the process will wait indefinitely for workers on other nodes to be created to do the testing.  In
+this case, not tests will be executed on the main node.  If N > 0, then test execution will start immediately
+on the main node following test setup;  as workers on other nodes come on line, they will pull tests from those
+remaining the queue and execute in parallel to the main.
+
+To start the client nodes:
+
+.. code-block:: shell
+
+   % pytest --num_cores <N> --as-client <host>:<port> [--connection-timeout <integer seconds>]
+
+Here, N must be greater than or equal to 1;  multiple workers can be invoked on a node, with possibly multiple client
+nodes. The client will attempt to connect to the main  node for a period of 30 seconds at which point it gives up and
+exits with na error.  If *--connection-timeout* is specified, the client will timeout and exit if it takes longer than
+the provided seconds to connect.  The default is 30 seconds.
+
+
+
+.. note::
+   *pytest_mproc* does not have the facilities to launch testing on other external nodes.  The checkout of code on
+   client machines and execution of the pytest command on client nodes falls outside of *pytest_mproc*'s scope and is
+   the responsibility of the client
+
+
+Node Scoped Fixtures
+--------------------
+
+With the system now allowing execution of mutliple workers on a single machine, and execution across multiple machines,
+this introduces a new level of scoping of fixtures:  *node*-scoped fixtures.  A fixture scoped to '*node*' is
+instantiated once per node and such instance is only available to workers on that node.  The '*global*'-scoped fixtures
+still hold the meaning of being scoped to the entirety of testing, one instance available to all workers across all
+machines (so thinkingg carefully about what you are providing in your *global* fixture!).
+
+To declare a fixture to be scoped to a node:
 
 .. code-block:: python
 
-   def preprocessor(request: Request) -> Union[None, Dict[str, Any]]:
-      return {'additional_arg': "value"}  # adds an additional argument to the web API call; can also return None
+   @pytest.fixture(scope='node')
+   def node_scoped_fixture_function():
+       ...
 
-   def postprocessor(response: Response) -> None:
-      response.body += b"\n Additional line of output"
-
-   ...
-
-   app = WebApplication(...)
-   app.set_preprocessing(preprocessor)
-   app.set_postprocessing(postprocessor)
-
-
-Alternatively, you can do this for each individual web API method through optional *preprocess* and *postprocess*
-arguments.  Using the above define *prerprocessor* and *postprocessor* functions, this would look like:
-
-.. code-block:: python
-
-   ...
-   @web_api(content_type='text/plain', preprocess=preprocessor, postprocess=postprocessor)
-
-
-
+.. caution::
+   As with global fixtures, node-level fixtures must return objects that are serializable ('picklable'), as they
+   must be shared across independent processes.

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Welcome to Bantam’s Documentation! &#8212; bantam  documentation</title>
+    <title>Welcome to pytest_mproc’s documentation! &#8212; pytest_mproc  documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -14,6 +14,7 @@
     <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Developer Guide" href="developer-guide.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -30,413 +31,306 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="welcome-to-bantam-s-documentation">
-<h1>Welcome to Bantam’s Documentation!<a class="headerlink" href="#welcome-to-bantam-s-documentation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="welcome-to-pytest-mproc-s-documentation">
+<h1>Welcome to pytest_mproc’s documentation!<a class="headerlink" href="#welcome-to-pytest-mproc-s-documentation" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="developer-guide.html">Developer Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer-guide.html#a-note-about-running-tests-for-pytest-mproc">A Note about Running Tests for pytest_mproc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer-guide.html#coordinator">Coordinator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer-guide.html#worker">Worker</a></li>
+</ul>
+</li>
+</ul>
 </div>
 </div>
 <div class="section" id="indices-and-tables">
-<h1>Indices and Tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
 </div>
-<div class="section" id="module-bantam.web">
-<span id="introduction"></span><h1>Introduction<a class="headerlink" href="#module-bantam.web" title="Permalink to this headline">¶</a></h1>
-<p>Welcome to Bantam, a framework for running a web server, built on top of <em>aiohttp</em>,
-poviding a convience-layer of abstraction.
-The framework allows users to define a Python web API through static methods of classes,
-and allows auto-generation of corresponding javascript APIs to match.  The developer need not
-be concerned about the details of how to map routes nor to understand the details of HTTP transactions.
-Ths developer need only focus on development of a web API as a Python interface.</p>
-<div class="section" id="getting-started">
-<h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
-<p>Let’s look at setting up a simple WebApplication on your localhost:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">asyncio</span>
-<span class="gp">... </span><span class="kn">from</span> <span class="nn">bantam.web</span> <span class="kn">import</span> <span class="n">web_api</span><span class="p">,</span> <span class="n">RestMethod</span><span class="p">,</span> <span class="n">WebApplication</span>
-<span class="gp">...</span>
-<span class="gp">... </span><span class="k">class</span> <span class="nc">Greetings</span><span class="p">:</span>
-<span class="gp">...</span>
-<span class="gp">... </span>    <span class="nd">@web_api</span><span class="p">(</span><span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;text/html&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">RestMethod</span><span class="o">.</span><span class="n">GET</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="nd">@staticmethod</span>
-<span class="gp">... </span>    <span class="k">async</span> <span class="k">def</span> <span class="nf">welcome</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="gp">... </span>        <span class="sd">&quot;&quot;&quot;</span>
-<span class="gp">... </span><span class="sd">        Welcome someone</span>
-<span class="gp">...</span><span class="sd"></span>
-<span class="gp">... </span><span class="sd">        :@param name: name of person to greet</span>
-<span class="gp">... </span><span class="sd">        :return: a salutation of welcome</span>
-<span class="gp">... </span><span class="sd">        &quot;&quot;&quot;</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;html&gt;&lt;body&gt;&lt;p&gt;Welcome, </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;</span>
-<span class="gp">...</span>
-<span class="gp">... </span>    <span class="nd">@web_api</span><span class="p">(</span><span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;text/html&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">RestMethod</span><span class="o">.</span><span class="n">GET</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="nd">@staticmethod</span>
-<span class="gp">... </span>    <span class="k">async</span> <span class="k">def</span> <span class="nf">goodbye</span><span class="p">(</span><span class="n">type_of_day</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="gp">... </span>        <span class="sd">&quot;&quot;&quot;</span>
-<span class="gp">... </span><span class="sd">        Tell someone goodbye by telling them to have a day (of the given type)</span>
-<span class="gp">...</span><span class="sd"></span>
-<span class="gp">... </span><span class="sd">        :@param type_of_day:  an adjective describe what type of day to have</span>
-<span class="gp">... </span><span class="sd">        :return: a saltation of welcome</span>
-<span class="gp">... </span><span class="sd">        &quot;&quot;&quot;</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;html&gt;&lt;body&gt;&lt;p&gt;Have a </span><span class="si">{</span><span class="n">type_of_day</span><span class="si">}</span><span class="s2"> day!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;</span>
-<span class="gp">...</span>
-<span class="gp">... </span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="n">app</span> <span class="o">=</span> <span class="n">WebApplication</span><span class="p">()</span>
-<span class="gp">... </span>    <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">start</span><span class="p">())</span> <span class="c1"># default to localhost HTTP on port 8080</span>
-</pre></div>
+<div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>Welcome to <em>pytest_mproc</em>, a plugin for pytest to run distributed testing via multiprocessing.  This manner
+of distributed testing has several advantages, including more efficient execution over pytest-xdist in many cases.</p>
+<p>xdist works for cases perhaps where there are large number of tests, but the cost of overhead in using rsync and
+overall implementation prevents realization of test-execution-time gains that one might hope for.</p>
+<p>To begin using pytest_mproc, just install:</p>
+<p>% pip install pytest-mproc</p>
+<p><em>pytest_mproc</em> is usable in the context of a single host with multiple cores, as well as execution across a distributed
+set of machines.</p>
 </div>
-<p>Saving this to a file, ‘saultations.py’, you can run this start your server:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>% python3 salutations.py
-</pre></div>
-</div>
-<p>Then open a browser to the following URL’s:</p>
-<ul class="simple">
-<li><p><a class="reference external" href="http://localhost:8080/Greetings/welcome?name=Bob">http://localhost:8080/Greetings/welcome?name=Bob</a></p></li>
-<li><p><a class="reference external" href="http://localhost:8080/Greetings/goodbye?type_of_day=wonderful">http://localhost:8080/Greetings/goodbye?type_of_day=wonderful</a></p></li>
-</ul>
-<p>to display various salutiations.</p>
-<p>To explain this code, the <em>&#64;web_api</em> decorator declares a method that is mapped to a route. The route is determined
-by the class name, in this case <em>Greetings</em>, and the method name. Thus, the “welcome” method above, as a member of
-<em>Greetings</em> class, is mapped to the route ‘/Greetings/welcome”.  There are some rules about methods declared as <em>&#64;web_api</em>:</p>
+<div class="section" id="why-use-pytest-mproc-over-pytest-xdist">
+<h1>Why Use <em>pytest_mproc</em> over <em>pytest-xdist</em>?<a class="headerlink" href="#why-use-pytest-mproc-over-pytest-xdist" title="Permalink to this headline">¶</a></h1>
+<p><em>pytest_mproc</em> has several advantages over xdist, depending on your situation:</p>
 <ol class="arabic simple">
-<li><p>They must be &#64;staticmethod’s.</p></li>
-<li><p>They must provide all type hints for parameters and return value,</p></li>
-<li><p>They must have parameters and return values of basic types (str, float, int bool) or a class that has both a serialize
-and deserialize method to convert to/from bytes (Actually there’s a little more to this, explained later)</p></li>
+<li><p>Overhead of startup is more efficient, and start-up time does not grow with increasing number of cores</p></li>
+<li><p>It uses a pull model, so that each worker pulls the next test from a master queue.  There is no need to figure
+out how to divy up the tests beforehand.  The disadvantage is that the developer needs to know how long roughly each
+test takes and prioritize the longer running tests first.</p></li>
+<li><p>It provides a ‘global’ scope test fixture to provide a single instance of a fixture across all tests, regardless of
+how many nodes</p></li>
+<li><p>It allows you to programatically group together a bunch of tests to run serially on a single worker process</p></li>
+<li><p>Support for execution across multiple machines</p></li>
+<li><p>It provides a better mechanism for prioritizing and configuring test execution</p></li>
 </ol>
-<p>The query parameters provided in the full URL are mapped to the parameters in the Python method.  For example,
-the query parameter name=Box in the first uRL above maps to the <em>name</em> parameter of the <em>Greetings.welcome</em> method,
-with ‘Bob’ as the value.
-The query parameters are translated to the value and type expected by the
-Python API. If the value is not convertible to the proper type, an error code along with reason are returned.
-There are a few other options for parameters and return type that will be  discussed later on streaming.</p>
-<p>The methods can also be declared as POST operations.  In this case, parameter values would be sent as part of the
-payload of the request (not query parameters) as a simple JSON dictionary.</p>
+</div>
+<div class="section" id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<p>To use with pytest, you use the -C or equivalently –cores argument to specify how many cores to run on:</p>
+<p>% pytest –cores 3 [remaining arguments]</p>
+<p>or to specify use of all available cores:</p>
+<p>% pytest –cores auto [remaining arguments]</p>
+<p>You can also specify things like “auto*2” or “auto/2” for number of cores.</p>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
-<p>Although the code prevents name collisions, the underlying (automated) routes do not, and a route must be unique.
-Thus, each pair of class/method declared as a &#64;web_api must be unique, including across differing modules.</p>
+<p>Overscribing CPUs will cause additional overhead.  <em>pytest_mproc</em> kicks off all worker threads up front, and
+each worker does identical processing to independently come up with the list of tests.  When the number of
+threads is less than or equal to the number of cores (“a batch”), this adds little overhead.  Once beyond that, each
+additional (partial) batch will add more overhead, as the CPU must be split across multiple threads for some or all
+cores.</p>
 </div>
 </div>
-<p>The specific WebApplication API is simple, and only the <em>start</em> method is of importance:</p>
-<dl class="py class">
-<dt id="bantam.web.WebApplication">
-<em class="property">class </em><code class="sig-prename descclassname">bantam.web.</code><code class="sig-name descname">WebApplication</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">static_path</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Union<span class="p">[</span>pathlib.Path<span class="p">, </span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">js_bundle_name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">router</span><span class="p">:</span> <span class="n">None</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">middlewares</span><span class="p">:</span> <span class="n">Iterable<span class="p">[</span>Callable<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">()</span></em>, <em class="sig-param"><span class="n">handler_args</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Mapping<span class="p">[</span>str<span class="p">, </span>Any<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">client_max_size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1048576</span></em>, <em class="sig-param"><span class="n">debug</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="default_value">Ellipsis</span></em><span class="sig-paren">)</span><a class="headerlink" href="#bantam.web.WebApplication" title="Permalink to this definition">¶</a></dt>
-<dd><p>Main class for running a WebApplication server. See the docs for <em>aiohttp</em> for information on the various
-parameters.  Additional parameters are:</p>
-<dl class="field-list simple">
-<dt class="field-odd">&#64;param static_path</dt>
-<dd class="field-odd"><p>root path to where static files will be kept, mapped to a route “/static”, if provided</p>
-</dd>
-<dt class="field-even">&#64;param js_bundle_name</dt>
-<dd class="field-even"><p>the name of the javascript file, <strong>without</strong> exetnesion, where the client-side API
-will be generated, if provided</p>
-</dd>
-</dl>
-<dl class="py exception">
-<dt id="bantam.web.WebApplication.DuplicateRoute">
-<em class="property">exception </em><code class="sig-name descname">DuplicateRoute</code><a class="headerlink" href="#bantam.web.WebApplication.DuplicateRoute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Raised if an attempt is made to register a web_api function under an existing route</p>
-</dd></dl>
+<div class="section" id="disabling-pytest-mproc-from-command-line">
+<h1>Disabling <em>pytest_mproc</em> from Command Line<a class="headerlink" href="#disabling-pytest-mproc-from-command-line" title="Permalink to this headline">¶</a></h1>
+<p>To disable mproc (overriding all other pytest-mproc-related flags), specify “–diable-mproc True” on the command line.</p>
+</div>
+<div class="section" id="top-level-command-line-configuration-options">
+<h1>Top-Level Command Line Configuration Options<a class="headerlink" href="#top-level-command-line-configuration-options" title="Permalink to this headline">¶</a></h1>
+<p>Aside from specifying the number of cores, the user can optionally specify the maximum number of active connections
+allowed during distributed processing.  The <em>multiprocessing</em> module can get bogged down and dwell on one thread or
+even deadlock when too many connection requests are made at one time to the main process.  To alleviate this,
+the number of allowed simultaneous connections is throttled, with a default of 24 maximum connections.  The user can
+over ride this using the <em>–max-simultanous-connections</em> option.</p>
+</div>
+<div class="section" id="grouping-tests">
+<h1>Grouping Tests<a class="headerlink" href="#grouping-tests" title="Permalink to this headline">¶</a></h1>
+<p>By default all tests are assumed independently runnable and isolated from one another.  That is the order in which they
+run within which process does not matter.  You may wish to specify a group of tests that must run serially within the
+same process/thread.  To do this, annotate each test using a unique name for the group:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest_mproc</span>
+<span class="n">TEST_GROUP1</span> <span class="o">=</span> <span class="s2">&quot;group1&quot;</span>
 
-<dl class="py method">
-<dt id="bantam.web.WebApplication.start">
-<em class="property">async </em><code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">host</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Union<span class="p">[</span>str<span class="p">, </span>Iterable<span class="p">[</span>str<span class="p">]</span><span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">port</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">shutdown_timeout</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">60.0</span></em>, <em class="sig-param"><span class="n">ssl_context</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>ssl.SSLContext<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">backlog</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">128</span></em>, <em class="sig-param"><span class="n">handle_signals</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">reuse_address</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">reuse_port</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#bantam.web.WebApplication.start" title="Permalink to this definition">¶</a></dt>
-<dd><p>start the app</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>host</strong> – host of app, if TCP based</p></li>
-<li><p><strong>port</strong> – port to handle requests on (to listen on) if TCP based</p></li>
-<li><p><strong>path</strong> – path, if using UNIX domain sockets to listen on (cannot specify both TCP and domain parameters)</p></li>
-<li><p><strong>shutdown_timeout</strong> – force shutdown if a shutdown call fails to take hold after this many seconds</p></li>
-<li><p><strong>ssl_context</strong> – for HTTPS server; if not provided, will default to HTTP connection</p></li>
-<li><p><strong>backlog</strong> – number of unaccepted connections before system will refuse new connections</p></li>
-<li><p><strong>handle_signals</strong> – gracefully handle TERM signal or not</p></li>
-<li><p><strong>reuse_address</strong> – tells the kernel to reuse a local socket in TIME_WAIT state, without waiting for its
-natural timeout to expire. If not specified will automatically be set to True on UNIX.</p></li>
-<li><p><strong>reuse_port</strong> – tells the kernel to allow this endpoint to be bound to the same port as other existing
-endpoints are bound to, so long as they all set this flag when being created. This option is not supported
-on Windows.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
+<span class="nd">@pytest_mproc</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">TEST_GROUP1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_something1</span><span class="p">():</span>
+     <span class="k">pass</span>
 
-</dd></dl>
-
-<div class="section" id="module-bantam.js">
-<span id="client-side-code-generation"></span><h2>Client-Side Code Generation<a class="headerlink" href="#module-bantam.js" title="Permalink to this headline">¶</a></h2>
-<p>Bantam provides the ability to auto-generate client-side javascript code to abstract the details of makting
-HTTP requests to the server.  This abstraction implies that the developer never need to know about routes,
-formulating URLs, how to make a POST request, how to stream data over HTTP, etc!</p>
-<p>To generate client side code, create a Python source file – let’s name it generator.py –
-and import all of the classes containing &#64;web_api’s
-to be generated. Then add the main entry poitn to generate the javascript code, like so:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bantam.js</span> <span class="kn">import</span> <span class="n">JavascriptGenerator</span>
-<span class="gp">... </span><span class="kn">from</span> <span class="nn">salutations</span> <span class="kn">import</span> <span class="n">Greetings</span>
-<span class="gp">...</span>
-<span class="gp">... </span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;salutations.js&#39;</span><span class="p">,</span> <span class="s1">&#39;bw&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output</span><span class="p">:</span>
-<span class="gp">... </span>       <span class="n">JavascriptGenerator</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">out</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">skip_html</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest_mproc</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">TEST_GROUP1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_something2</span><span class="p">():</span>
+     <span class="k">pass</span>
 </pre></div>
 </div>
-<p>Run the script as so:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>% python generate.py
+<p>Likewise, you can use the same annotation on test class to group all test methods within that class:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest_mproc</span>
+
+<span class="n">TEST_GROUP_CLASS</span> <span class="o">=</span> <span class="n">GroupTag</span><span class="p">(</span><span class="s2">&quot;class_group&quot;</span><span class="p">)</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mproc</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">TEST_GROUP_CLASS</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">TestClass</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">test_method1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">test_method2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="k">pass</span>
 </pre></div>
 </div>
-<p>With the above Greetings example, the generated javasctipt code will mimic the Python:</p>
-<div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">javascript code auto-generated from Python server’s web API</span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
-<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">bantam</span> <span class="p">{};</span>
-<span class="nx">bantam</span><span class="p">.</span><span class="nx">salutations</span> <span class="o">=</span> <span class="kr">class</span> <span class="p">{};</span>
-<span class="nx">bantam</span><span class="p">.</span><span class="nx">salutations</span><span class="p">.</span><span class="nx">Greetings</span> <span class="o">=</span> <span class="kr">class</span> <span class="p">{</span>
-      <span class="nx">constructor</span><span class="p">(</span><span class="nx">site</span><span class="p">){</span><span class="k">this</span><span class="p">.</span><span class="nx">site</span> <span class="o">=</span> <span class="nx">site</span><span class="p">;}</span>
+<p>This is useful if the tests are using a common resource for testing and parallelized execution of tests might
+result in interference.</p>
+<div class="section" id="configuring-test-execution-of-groups">
+<h2>Configuring Test Execution of Groups<a class="headerlink" href="#configuring-test-execution-of-groups" title="Permalink to this headline">¶</a></h2>
+<p>As discussed below, <em>pytest_mproc</em> allows execution across multiple machines/indepenent processes.  There are two
+ways to specify how a group of tests will be executed by using the <em>restric_to</em> parameter of the
+<em>pytest_mproc.group</em> decorator.  This can take one of two values.</p>
+<ol class="arabic simple">
+<li><p><em>pytest_mproc.TestExecutionConstraint.SINGLE_PROCESS</em> - this is the default value.  This specifies that the tests
+are to run serially based on priority of tests within the group on a single core</p></li>
+<li><p><em>pytest_mproc.TestExecutionConstraint.SINGLE_NODE</em>  - This specifies that the group of tests are to run on a single
+node of the system, but within that node the set of tests can be distributed among the workers of that node</p></li>
+</ol>
+<p>If specifying <em>SINGLE_NODE</em> execution in the context of running a single <em>pytest</em> process (and therefore a single node),
+the only value provided is the ability to specify a hierarchy of priorities.</p>
+</div>
+</div>
+<div class="section" id="a-matter-of-priority">
+<h1>A Matter of Priority<a class="headerlink" href="#a-matter-of-priority" title="Permalink to this headline">¶</a></h1>
+<p>You can also specify a priority for test execution using the <em>pytest_mproc.priority</em> decorator:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest_mproc</span>
 
-      <span class="cm">/*</span>
-<span class="cm">      Welcome someone</span>
-<span class="cm">      The response will be provided as the (first) parameter passed into onsuccess</span>
-
-<span class="cm">      @param {function(string) =&gt; null} onsuccess callback inoked, passing in response from server on success</span>
-<span class="cm">      @param {function(int, str) =&gt; null}  onerror  callback upon error, passing in response code and status text</span>
-<span class="cm">      @param {{string}} name name of person to greet</span>
-<span class="cm">      */</span>
-      <span class="nx">welcome</span><span class="p">(</span><span class="nx">onsuccess</span><span class="p">,</span> <span class="nx">onerror</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
-         <span class="p">...</span>
-      <span class="p">}</span>
-
-       <span class="cm">/*</span>
-<span class="cm">       Tell someone goodbye by telling them to have a day (of the given type)</span>
-<span class="cm">       The response will be provided as the (first) parameter passed into onsuccess</span>
-
-<span class="cm">       @param {function(string) =&gt; null} onsuccess callback inoked, passing in response from server on success</span>
-<span class="cm">       @param {function(int, str) =&gt; null}  onerror  callback upon error, passing in response code and status text</span>
-<span class="cm">       @param {{string}} type_of_day adjective describing type of day to have</span>
-<span class="cm">       */</span>
-      <span class="nx">goodbye</span><span class="p">(</span><span class="nx">onsuccess</span><span class="p">,</span> <span class="nx">onerror</span><span class="p">,</span> <span class="nx">type_of_day</span><span class="p">)</span> <span class="p">{</span>
-        <span class="p">...</span>
-      <span class="p">}</span>
-<span class="p">};</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mpro</span><span class="o">.</span><span class="n">priority</span><span class="p">(</span><span class="n">pytest_mproc</span><span class="o">.</span><span class="n">DEFAULT_PRIORITY</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_function</span><span class="p">():</span>
+   <span class="k">pass</span>
 </pre></div>
 </div>
+<p>Groups with lower interger priority value are scheduled before those with a higher priority value.  Thus, a
+group with priority <em>pytest_mproc.DEFAULT_PRIORITY-1</em> will be scheduled before a group with priority
+<em>pytest_mproc.DEFAULT_PRIORITY-2</em>.  Of course, the default priority of <em>pytest_mproc.DEFAULT_PRIORITY</em>  is used if
+unspecified.</p>
+<p>Priorities should be specified to the default priority assigned to all tests without decorators, which can be
+obtained through the variable <em>pytest_mproc.DEFAULT_PRIORITY</em>.  When working with grouped tests as explained above,
+the priorities are scoped.  That is, at a global level, the priority of a group of tests will determine that group’s
+execution order relative to all other top-level tests or test groups. For tests within a group, the priority of each test
+will determine the order of execution only within that group.  <em>pytest_mproc</em> does not guarantee order of
+execution for tests or test groups with the same priority.</p>
+<p>If you specify a priorty on a class of tests, all test methods within that class will have that priority, unless
+a specific priority is assigned to that method through its own decorator.  In that class, the decorator for the class
+method is used.</p>
 </div>
-<p>The code maintains the same hierarchy in namespaces as modules in Python, albeit under a global <em>bantam</em> namespace.
-This prevents potential namespace collisions.  The signatures of the API mimic those defined in the Pyhon codebase,
-with the noted exception of the <em>onsuccess</em> and <em>onerror</em> callbacks as the first two parameters.
-This is typical of how plain javascript handles asynchronous transactions:  rather than returning a value or raising an
-exception, these callbacks are invoked instead, upon response from the server.</p>
-<div class="section" id="generation-on-the-fly">
-<h3>Generation on the fly<a class="headerlink" href="#generation-on-the-fly" title="Permalink to this headline">¶</a></h3>
-<p>As an even greater convenience, the code can be generated on the fly, when the <em>WebApplication</em> is created.
-By providing two parameters to the init call to your <em>WebApplication</em>:</p>
-<ul class="simple">
-<li><p><em>static_path</em>: the root path to serve static files</p></li>
-<li><p><em>js_bundle_name</em>: the name (<strong>without</strong> extension) of the javascript bundle file</p></li>
-</ul>
-<p>the javascript code will be (re)generated just before startup of the server.  The javascript file that provides
-the web API on the client side will then be available under the static route <em>/static/js/&lt;js-bundle-name&gt;.js</em>.</p>
-<p>In the example above the instantiations of the <em>app</em> would be:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">app</span> <span class="o">=</span> <span class="n">WebApplication</span><span class="p">(</span><span class="n">static_path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;./static&quot;</span><span class="p">),</span> <span class="n">js_bundle_name</span><span class="o">=</span><span class="s1">&#39;salutations&#39;</span><span class="p">)</span>
+<div class="section" id="a-global-ly-scoped-fixture">
+<h1>A ‘global’-ly Scoped Fixture<a class="headerlink" href="#a-global-ly-scoped-fixture" title="Permalink to this headline">¶</a></h1>
+<p>As is the case with <em>pytest_xdist</em> plugin, <em>pytest_mproc</em> uses multiprocessing module to achieve parallel concurrency.
+This raises interesting behaviors about ‘session’ scoped fixtures.  Each subprocess that is launched will create its own
+session-level fixture;  in other words, you can think of a session as a per-process concept, with one session-level
+fixture per process.  This is often not obvious to test developers. Many times, a global fixture is needed, with a
+single instantiation across all processes and tests.  An example might be setting up a single test database.
+(NOTE: when running on more than one machine, also see ‘node-level’ fixtures discussed below)</p>
+<p>To achieve this, <em>pytest_mproc</em> adds a new scope: ‘global’. Behind the scenes, the system uses pythons <em>multiprocessing</em>
+module’s BaseManager to provide this feature.  This is mostly transparent to the developer, with one notable exception.
+In order to communicate a fixture globally across multiple <em>Process</em> es, the object returned (or yielded) from a
+globally scoped fixture must be ‘picklable’.</p>
+<p>The ‘global’ scope is a level above ‘session’ in the hierarchy.  That means that globally scoped fixtures can only
+depend on other globally scoped fixtures.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Values returned or yielded from a fixture with scope’global’ must be picklable so as to be shared across multiple
+independent subprocesses.</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;global&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">globally_scoped_fixture</span><span class="p">()</span>
+    <span class="o">...</span>
 </pre></div>
 </div>
-<p>The client interface is then available through:</p>
-<ul class="simple">
-<li><p><a class="reference external" href="http://localhost:8080/static/js/salutations.js">http://localhost:8080/static/js/salutations.js</a></p></li>
-</ul>
-<p>Through a simple normal declaration of an API in the Python code, and auto-generation of client code, the developer
-is free to ignore the details of the inner works of routes and HTTP transactions.</p>
-</div>
-</div>
-<div class="section" id="optional-parameters">
-<h2>Optional Parameters<a class="headerlink" href="#optional-parameters" title="Permalink to this headline">¶</a></h2>
-<p>If default parameter values are provided, they are optionally provided on the javascript client-side as well.
-Additionally, to refine the second rule of declaring a web API above, the type for a parameter can also be
-declared as an Optional to any the types declared there. Provided a default value, include <em>None</em>, is provided.</p>
-</div>
-<div class="section" id="streamed-responses">
-<h2>Streamed Responses<a class="headerlink" href="#streamed-responses" title="Permalink to this headline">¶</a></h2>
-<p>Responses can be streamed back to the client.  To do so, the underlying Python server call must be written as
-an <em>AsyncGenerator</em>, returning a type <em>AsyncGenerator[None, &lt;int, float, bool, str, or bytes&gt;]</em>.   (Thus, ammending
-the rule of allowed return values above).  Consider this example of a PoetryReader class:</p>
-<div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text">Example of server code to stream a poem back to the client</span><a class="headerlink" href="#id2" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<div class="section" id="tips-for-using-global-scope-fixture">
+<h2>Tips for Using Global Scope Fixture<a class="headerlink" href="#tips-for-using-global-scope-fixture" title="Permalink to this headline">¶</a></h2>
+<p>Admittedly, one has to think about how multiprocessing works to know what can and cannot be returned from a global
+test fixture.  Since they are “singletons”, one useful tip if you are using (singleton) classes (such as manager classses) to
+encaspulate logic, it is best not to put anything other than what is necessary as instance variables, and delegate
+them to class variable.  Also, you should design your fixture so that any other test not depending on it is not blocked
+while on that fixture.  Example code is shown blow</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
 
-<span class="kn">from</span> <span class="nn">bantam.decorators</span> <span class="kn">import</span> <span class="n">RestMethod</span>
-<span class="kn">from</span> <span class="nn">bantam.web</span> <span class="kn">import</span> <span class="n">WebApplication</span><span class="p">,</span> <span class="n">web_api</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">AsyncGenerator</span>
+<span class="k">class</span> <span class="nc">Manager</span><span class="p">:</span>
 
-<span class="k">class</span> <span class="nc">PoetryReader</span><span class="p">:</span>
-    <span class="n">POEM</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">    Mary had a little lamb...</span>
-<span class="s2">    Its fleece was white as snow...</span>
-<span class="s2">    Everywhere that Mary went...</span>
-<span class="s2">    Her lamb was sure to go...</span>
-<span class="s2">    &quot;&quot;&quot;</span>
+     <span class="c1"># not picklable, so keep at class level</span>
+    <span class="n">_proc</span><span class="p">:</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="nd">@web_api</span><span class="p">(</span><span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;text/streamed&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">RestMethod</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
     <span class="nd">@staticmethod</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">read_poem</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">AsyncGenerator</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">PoetryReader</span><span class="o">.</span><span class="n">POEM</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
-            <span class="k">yield</span> <span class="n">line</span>
-            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># for dramatic effect</span>
-        <span class="k">yield</span> <span class="s2">&quot;THE END&quot;</span>
-        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">app</span> <span class="o">=</span> <span class="n">WebApplication</span><span class="p">(</span><span class="n">static_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="n">js_bundle_name</span><span class="o">=</span><span class="s1">&#39;poetry_reader&#39;</span><span class="p">)</span>
-    <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">start</span><span class="p">())</span>  <span class="c1"># default to localhost HTTP on port 8080</span>
-</pre></div>
-</div>
-</div>
-<div class="admonition caution">
-<p class="admonition-title">Caution</p>
-<p>The method must be declared as POST to work consistently across different machines/web browsers</p>
-</div>
-<p>The javascript generated for such an API is the same, with the exception that the <em>onsuccess</em> callback will be
-named <em>onreceive</em> and will be called with two parameters.  The first is the “chunk” that is read and the second
-is a boolean indicating whether it is the final one or not.  The “chunks” are determine by the type yielded by
-the generator:</p>
-<ul class="simple">
-<li><dl class="simple">
-<dt>for numeric or <em>bool</em> types: each number yielded will invoke a single callback to <em>onreceive</em>.  But be aware that multiple</dt><dd><p>values can be sent at a time and that the generated javascript code will handle the logic to split them up.
-This is particularly true when there is no or short sleep periods between yields.</p>
-</dd>
-</dl>
-</li>
-<li><p>for <em>str</em> type: <em>onreceive</em> will be called for each line received, guaranteeing whole lines are provided</p></li>
-<li><p>for <em>bytes</em> type: <em>cnreceive</em> will be called for each chunk of bytes received, regardless of size</p></li>
-</ul>
-<p>Here is a bit of HTML to implement the client-side:</p>
-<div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">HTML containing client-side code for handling streaming responses</span><a class="headerlink" href="#id3" title="Permalink to this code">¶</a></div>
-<div class="highlight-html notranslate"><div class="highlight"><pre><span></span> <span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
- <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
-     <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;/static/js/poetry_reader.js&quot;</span> <span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
- <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
- <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
- <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#39;poem&#39;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
- <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
-     <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;DOMContentLoaded&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
-
-         <span class="kd">let</span> <span class="nx">reader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">bantam</span><span class="p">.</span><span class="nx">__main__</span><span class="p">.</span><span class="nx">PoetryReader</span><span class="p">(</span><span class="s2">&quot;http://localhost:8080&quot;</span><span class="p">);</span>
-         <span class="kd">let</span> <span class="nx">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-         <span class="kd">let</span> <span class="nx">onreceive</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span> <span class="nx">is_done</span><span class="p">){</span>
-              <span class="nx">html</span> <span class="o">+=</span> <span class="s2">&quot;&lt;p&gt;&quot;</span> <span class="o">+</span> <span class="nx">line</span> <span class="o">+</span> <span class="s2">&quot;&lt;/p&gt;&lt;br/&gt;&quot;</span><span class="p">;</span>
-              <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;poem&#39;</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">html</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nx">reader</span><span class="p">.</span><span class="nx">read_poem</span><span class="p">(</span><span class="nx">onreceive</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">reason</span><span class="p">){</span>
-             <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;UNEXPECTED ERROR OCCURRED: &quot;</span> <span class="o">+</span> <span class="nx">code</span> <span class="o">+</span> <span class="s2">&quot; : &quot;</span> <span class="o">+</span> <span class="nx">reason</span><span class="p">);</span>
-         <span class="p">});</span>
-     <span class="p">});</span>
- <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
- <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
- <span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
-</pre></div>
-</div>
-</div>
-<p>Loading the page <a class="reference external" href="http://localhost:8080/static/index.html">http://localhost:8080/static/index.html</a> will execute the code.</p>
-</div>
-</div>
-<div class="section" id="streaming-requests">
-<h1>Streaming Requests<a class="headerlink" href="#streaming-requests" title="Permalink to this headline">¶</a></h1>
-<p>You can also make requests that stream (upload) data to the server.  Here again, we add two more (final) allowable
-types for parameters that specify a parameter provides an (async) iterator for lopping over and sending data chunk
-by chunk:</p>
-<ul class="simple">
-<li><p><em>bantam.web.AsyncLineGIterator</em>: specifies that the client will send <em>str</em> data to the server line by line (without
-any return character present in the line)</p></li>
-<li><p><em>bantam.web.AsyncChunkIterator</em>: specifies that the iterator will send <em>bytes</em> of data to the server</p></li>
-</ul>
-<div class="admonition caution">
-<p class="admonition-title">Caution</p>
-<p>At most one parameter may be specified as an iterator type</p>
-</div>
-<p>Here is what a web API method would look like that captures uploaded byts of data to a file and reports progress
-back to the client:</p>
-<div class="literal-block-wrapper docutils container" id="id4">
-<div class="code-block-caption"><span class="caption-text">Example code for Python web API method that streams data</span><a class="headerlink" href="#id4" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="k">class</span> <span class="nc">Uploader</span><span class="p">:</span>
-     <span class="nd">@web_api</span><span class="p">(</span><span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;text/html&#39;</span><span class="p">)</span>
-     <span class="nd">@staticmethod</span>
-     <span class="k">async</span> <span class="k">def</span> <span class="nf">receive_streamed_data</span><span class="p">(</span><span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">byte_data</span><span class="p">:</span> <span class="n">AsyncChunkGenerator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncGenerator</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
-         <span class="n">bytes_received</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-         <span class="n">packet_size</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1"># bytes</span>
-         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;some_file_path&#39;</span><span class="p">,</span> <span class="s1">&#39;bw&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-             <span class="k">async</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">byte_data</span><span class="p">(</span><span class="n">packet_size</span><span class="p">):</span>
-                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">byte_data</span><span class="p">)</span>
-                 <span class="n">bytes_received</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">byte_data</span><span class="p">)</span>
-                 <span class="n">progress</span> <span class="o">=</span> <span class="n">bytes_received</span><span class="o">*</span><span class="mi">100</span><span class="o">/</span><span class="n">size</span>
-                 <span class="k">yield</span> <span class="n">progress</span>
-</pre></div>
-</div>
-</div>
-<p>As a side note, when a streaming parameter is specified, all others will be sent as query parameters even when the request is
-POST.  Note that for chunk iterators, the parameter byte_data will be a callable that takes a single parameter,
-which is the max size of packet to be read each chunk.  The line iterator will be a simple iterator, not a callable.
-That is for a line itertor the Python code would look like:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">...</span>
-<span class="k">class</span> <span class="nc">Uploader</span><span class="p">:</span>
-    <span class="nd">@web_api</span><span class="p">(</span><span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;text/html&#39;</span><span class="p">)</span>
-    <span class="nd">@staticmethod</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">receive_streamed_data</span><span class="p">(</span><span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">line_by_line</span><span class="p">:</span> <span class="n">AsyncLineGenerator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncGenerator</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="n">hostname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Nont</span><span class="p">:</span>
         <span class="o">...</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;some_file_path&#39;</span><span class="p">,</span> <span class="s1">&#39;bw&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="k">async</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">line_by_line</span><span class="p">:</span>  <span class="c1">#&lt;====  NOT a function call as in AsyncChunkIterator</span>
-               <span class="o">...</span>
-</pre></div>
-</div>
-<p>On the client side, the signature of the API will look similar, with the <em>onsuccess</em> (<em>onreceive</em> if the
-response is also streaming) and <em>onerror</em> callbacks act the same.  The differences are that:</p>
-<ol class="arabic simple">
-<li><p>the parameter that is the AsyncLine[Chunk]Iterator will not be present in the signature</p></li>
-<li><p>insted, the javascript API call will return a function to be called by the client to send each chunk of data (ad
-the first and only parameter of the function)</p></li>
-</ol>
-<p>An example of uploading a file using the above api (assuming the Uploader class belongs to the module <em>uploads</em>):</p>
-<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">...</span>
-<span class="kd">let</span> <span class="nx">onreceive</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">progress</span><span class="p">,</span> <span class="nx">is_done</span><span class="p">){</span>
-   <span class="p">...</span>
-<span class="p">}</span>
-<span class="kd">let</span> <span class="nx">onerror</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">reason</span><span class="p">){</span>
-   <span class="p">...</span>
-<span class="p">}</span>
-<span class="kd">let</span> <span class="nx">uploader</span> <span class="o">=</span> <span class="nx">bantam</span><span class="p">.</span><span class="nx">uploads</span><span class="p">.</span><span class="nx">Uploader</span><span class="p">(</span><span class="nx">site_url</span><span class="p">)</span>
-<span class="kd">let</span> <span class="nx">size_of_upload</span> <span class="o">=</span> <span class="mf">1024</span><span class="o">*</span><span class="mf">1024</span><span class="p">;</span>  <span class="c1">// bytes</span>
-<span class="kd">let</span> <span class="nx">send_byte_data</span> <span class="o">=</span> <span class="nx">uploader</span><span class="p">.</span><span class="nx">receive_streamed_data</span><span class="p">(</span><span class="nx">onreceive</span><span class="p">,</span> <span class="nx">onerror</span><span class="p">,</span> <span class="nx">size_of_upload</span><span class="p">)</span>
-<span class="kr">const</span> <span class="nx">reader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FileReader</span><span class="p">();</span>
-<span class="nx">reader</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
-    <span class="nx">send_byte_data</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">result</span><span class="p">);</span>
-<span class="p">});</span>
-<span class="nx">reader</span><span class="p">.</span><span class="nx">readAsText</span><span class="p">(</span><span class="nx">file</span><span class="p">);</span> <span class="c1">// assumng file is a file object created prior to this code</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="pre-processing-requests-post-processing-responses">
-<h1>Pre-Processing Requests &amp; Post-Processing Responses<a class="headerlink" href="#pre-processing-requests-post-processing-responses" title="Permalink to this headline">¶</a></h1>
-<p>You can pre-process requests before a call is made to the underlying Python web API. Likewise, you can modify
-responses returned from a Python web API call before it is sent to the client.  There are two means to do so.
-One is at the application level, by calling <em>set_preprocessor</em> and <em>set_postprocessor</em> accordingly:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">preprocessor</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-   <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;additional_arg&#39;</span><span class="p">:</span> <span class="s2">&quot;value&quot;</span><span class="p">}</span>  <span class="c1"># adds an additional argument to the web API call; can also return None</span>
+        <span class="n">start_some_service</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">postprocessor</span><span class="p">(</span><span class="n">response</span><span class="p">:</span> <span class="n">Response</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-   <span class="n">response</span><span class="o">.</span><span class="n">body</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Additional line of output&quot;</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">setup_resources</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Nont</span><span class="p">:</span>
+         <span class="n">hostname</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="mi">32873</span>
+         <span class="c1"># service is started i the background so as not to hold up the system</span>
+         <span class="bp">cls</span><span class="o">.</span><span class="n">_proc</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Procss</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+        <span class="o">...</span>
+        <span class="k">return</span> <span class="n">hostname</span><span class="p">,</span> <span class="n">port</span>
 
-<span class="o">...</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">hostname</span><span class="p">:</span><span class="nb">str</span> <span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+         <span class="o">...</span>
 
-<span class="n">app</span> <span class="o">=</span> <span class="n">WebApplication</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-<span class="n">app</span><span class="o">.</span><span class="n">set_preprocessing</span><span class="p">(</span><span class="n">preprocessor</span><span class="p">)</span>
-<span class="n">app</span><span class="o">.</span><span class="n">set_postprocessing</span><span class="p">(</span><span class="n">postprocessor</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_proc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Attempt top instantiate singleton more then once&quot;</span>
+        <span class="c1"># hostname and port are a str and int so easily Picklable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hostname</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setup_resources</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s2">&quot;Manager&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shudown</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hostname</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_port</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proc</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">hostname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hostname</span>
+
+     <span class="k">def</span> <span class="nf">port</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_port</span>
+
+
+ <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;global&#39;</span><span class="p">)</span>
+ <span class="k">def</span> <span class="nf">resource</span><span class="p">():</span>
+     <span class="c1"># called only once across all processes and for all tests</span>
+     <span class="k">with</span> <span class="n">Manager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
+         <span class="k">yield</span> <span class="n">manager</span><span class="o">.</span><span class="n">hostname</span><span class="p">,</span> <span class="n">manager</span><span class="o">.</span><span class="n">port</span>
 </pre></div>
 </div>
-<p>Alternatively, you can do this for each individual web API method through optional <em>preprocess</em> and <em>postprocess</em>
-arguments.  Using the above define <em>prerprocessor</em> and <em>postprocessor</em> functions, this would look like:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">...</span>
-<span class="nd">@web_api</span><span class="p">(</span><span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;text/plain&#39;</span><span class="p">,</span> <span class="n">preprocess</span><span class="o">=</span><span class="n">preprocessor</span><span class="p">,</span> <span class="n">postprocess</span><span class="o">=</span><span class="n">postprocessor</span><span class="p">)</span>
+<p><em>pytest_mproc</em> guarantees that all fixtures are in place before worker clients in other processes access them, so as
+not to cause a race condition.</p>
+</div>
+</div>
+<div class="section" id="a-safe-tmpdir-fixture">
+<h1>A Safe <em>tmpdir</em> Fixture<a class="headerlink" href="#a-safe-tmpdir-fixture" title="Permalink to this headline">¶</a></h1>
+<p><em>pytest_mproc</em> provides its own fixtures for creating temporary directories: <em>mp_tmpdir_factory</em>, a fixture with a
+“<em>create_tmpdir</em>” method for creating multiple temporary directories within a test procedure, and a
+<em>mp_tmpdir</em> directory for creating a single temporary directory.  Other plugins providing similar featurs can have
+race conditions causing intermittent (if infrequent) failures.  This plugin guarantees to be free of race conditions
+and safe in the context of <em>pytest_mproc</em>’s concrurrent test framework.</p>
+</div>
+<div class="section" id="advanced-testing-on-a-distributed-set-of-machines">
+<h1>Advanced: Testing on a Distributed Set of Machines<a class="headerlink" href="#advanced-testing-on-a-distributed-set-of-machines" title="Permalink to this headline">¶</a></h1>
+<p><em>pytest_mproc</em> has support for running test distributed across multiple mahcines.</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>This feature may not be as robust against fault tolerance.  The basic functionality exists, but robustness
+against exception in fixtures, etc., has not been fully tested</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Throttling of connections only happens on a per-node basis, not globally.  It may be possible to overwhelm
+the main node if you are using too many remote workers, causing deadlock</p>
+</div>
+<p>The concept is that one node will act as the main node, collecting and reporting test status, while all others
+will act as clients – executing tests and reporting status back the the main node.  To start the main node,
+use the “–as-server” command line argument, specifying the port the server will listen on:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>% pytest --num_cores &lt;N&gt; --as-server &lt;port&gt; ...
 </pre></div>
+</div>
+<p>When <em>–as-server</em> argument is presnt, N may be zero, indicating
+the process will wait indefinitely for workers on other nodes to be created to do the testing.  In
+this case, not tests will be executed on the main node.  If N &gt; 0, then test execution will start immediately
+on the main node following test setup;  as workers on other nodes come on line, they will pull tests from those
+remaining the queue and execute in parallel to the main.</p>
+<p>To start the client nodes:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>% pytest --num_cores &lt;N&gt; --as-client &lt;host&gt;:&lt;port&gt; <span class="o">[</span>--connection-timeout &lt;integer seconds&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p>Here, N must be greater than or equal to 1;  multiple workers can be invoked on a node, with possibly multiple client
+nodes. The client will attempt to connect to the main  node for a period of 30 seconds at which point it gives up and
+exits with na error.  If <em>–connection-timeout</em> is specified, the client will timeout and exit if it takes longer than
+the provided seconds to connect.  The default is 30 seconds.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><em>pytest_mproc</em> does not have the facilities to launch testing on other external nodes.  The checkout of code on
+client machines and execution of the pytest command on client nodes falls outside of <em>pytest_mproc</em>’s scope and is
+the responsibility of the client</p>
+</div>
+<div class="section" id="node-scoped-fixtures">
+<h2>Node Scoped Fixtures<a class="headerlink" href="#node-scoped-fixtures" title="Permalink to this headline">¶</a></h2>
+<p>With the system now allowing execution of mutliple workers on a single machine, and execution across multiple machines,
+this introduces a new level of scoping of fixtures:  <em>node</em>-scoped fixtures.  A fixture scoped to ‘<em>node</em>’ is
+instantiated once per node and such instance is only available to workers on that node.  The ‘<em>global</em>’-scoped fixtures
+still hold the meaning of being scoped to the entirety of testing, one instance available to all workers across all
+machines (so thinkingg carefully about what you are providing in your <em>global</em> fixture!).</p>
+<p>To declare a fixture to be scoped to a node:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;node&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">node_scoped_fixture_function</span><span class="p">():</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>As with global fixtures, node-level fixtures must return objects that are serializable (‘picklable’), as they
+must be shared across independent processes.</p>
+</div>
 </div>
 </div>
 
@@ -447,7 +341,7 @@ arguments.  Using the above define <em>prerprocessor</em> and <em>postprocessor<
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="#">bantam</a></h1>
+<h1 class="logo"><a href="#">pytest_mproc</a></h1>
 
 
 
@@ -457,11 +351,16 @@ arguments.  Using the above define <em>prerprocessor</em> and <em>postprocessor<
 
 
 <h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="developer-guide.html">Developer Guide</a></li>
+</ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="developer-guide.html" title="next chapter">Developer Guide</a></li>
   </ul></li>
 </ul>
 </div>
