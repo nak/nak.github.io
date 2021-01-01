@@ -1,3 +1,7 @@
 [submodule "pytest_mproc"]
 	path = pytest_mproc
 	url = https://github.com/nak/pytest_mproc
+[submodule "bantam"]
+	path = bantam
+	url = https://github.com/nak/bantam
+
