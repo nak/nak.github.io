@@ -1,16 +1,18 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
     <title>Welcome to pytest_mproc’s documentation! &#8212; pytest_mproc  documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -31,87 +33,90 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="welcome-to-pytest-mproc-s-documentation">
-<h1>Welcome to pytest_mproc’s documentation!<a class="headerlink" href="#welcome-to-pytest-mproc-s-documentation" title="Permalink to this headline">¶</a></h1>
+  <section id="welcome-to-pytest-mproc-s-documentation">
+<h1>Welcome to pytest_mproc’s documentation!<a class="headerlink" href="#welcome-to-pytest-mproc-s-documentation" title="Permalink to this heading">¶</a></h1>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="developer-guide.html">Developer Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="developer-guide.html#a-note-about-running-tests-for-pytest-mproc">A Note about Running Tests for pytest_mproc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="developer-guide.html#coordinator">Coordinator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="developer-guide.html#worker">Worker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer-guide.html#module-pytest_mproc.coordinator">Coordinator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer-guide.html#module-pytest_mproc.worker">Worker</a></li>
 </ul>
 </li>
 </ul>
 </div>
-</div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading">¶</a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
-</div>
-<div class="section" id="introduction">
-<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">¶</a></h1>
 <p>Welcome to <em>pytest_mproc</em>, a plugin for pytest to run distributed testing via multiprocessing.  This manner
 of distributed testing has several advantages, including more efficient execution over pytest-xdist in many cases.</p>
-<p>xdist works for cases perhaps where there are large number of tests, but the cost of overhead in using rsync and
-overall implementation prevents realization of test-execution-time gains that one might hope for.</p>
 <p>To begin using pytest_mproc, just install:</p>
 <p>% pip install pytest-mproc</p>
 <p><em>pytest_mproc</em> is usable in the context of a single host with multiple cores, as well as execution across a distributed
 set of machines.</p>
-</div>
-<div class="section" id="why-use-pytest-mproc-over-pytest-xdist">
-<h1>Why Use <em>pytest_mproc</em> over <em>pytest-xdist</em>?<a class="headerlink" href="#why-use-pytest-mproc-over-pytest-xdist" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="why-use-pytest-mproc-over-pytest-xdist">
+<h1>Why Use <em>pytest_mproc</em> over <em>pytest-xdist</em>?<a class="headerlink" href="#why-use-pytest-mproc-over-pytest-xdist" title="Permalink to this heading">¶</a></h1>
+<p>Why not just use <em>xdist</em>, another parallelization mechanism for test execution? <em>xdist</em> works for cases perhaps
+where there are large number of tests, but the cost of overhead in using rsync and
+overall implementation prevents realization of test-execution-time gains that one might hope for.  <em>xdist</em> also
+does not provide a way to run distributed on multiple machines</p>
 <p><em>pytest_mproc</em> has several advantages over xdist, depending on your situation:</p>
-<ol class="arabic simple">
-<li><p>Overhead of startup is more efficient, and start-up time does not grow with increasing number of cores</p></li>
-<li><p>It uses a pull model, so that each worker pulls the next test from a master queue.  There is no need to figure
-out how to divy up the tests beforehand.  The disadvantage is that the developer needs to know how long roughly each
-test takes and prioritize the longer running tests first.</p></li>
-<li><p>It provides a ‘global’ scope test fixture to provide a single instance of a fixture across all tests, regardless of
-how many nodes</p></li>
+<ul class="simple">
+<li><p>Overhead firing startup is much less, and start-up time does not grow with increasing number of cores as in xdist</p></li>
+<li><p>It uses a pull model, so that each worker pulls the next test from a master queue, with no need to figure
+out how to divide the tests beforehand.  The disadvantage is that optimal efficiency requires knowledge to
+prioritize longer running tests first.</p></li>
+<li><p>It provides a ‘global’ scoped test fixture to provide a single instance of a fixture across all tests, regardless of
+how many nodes.</p></li>
+<li><p>It provide a ‘node’ scoped test fixture that is a single instance across all workers on a single machine (node)</p></li>
 <li><p>It allows you to programatically group together a bunch of tests to run serially on a single worker process</p></li>
 <li><p>Support for execution across multiple machines</p></li>
 <li><p>It provides a better mechanism for prioritizing and configuring test execution</p></li>
-</ol>
-</div>
-<div class="section" id="usage">
-<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+</ul>
+</section>
+<section id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h1>
 <p>To use with pytest, you use the -C or equivalently –cores argument to specify how many cores to run on:</p>
 <p>% pytest –cores 3 [remaining arguments]</p>
 <p>or to specify use of all available cores:</p>
 <p>% pytest –cores auto [remaining arguments]</p>
-<p>You can also specify things like “auto*2” or “auto/2” for number of cores.</p>
+<p>You can also specify things like “auto*2” or “auto/2” for number of cores.  This is all that is needed
+to get started with the minimal configuration for <em>pytest_mproc</em> – running tests on multiple cores on a single machine.</p>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
-<p>Overscribing CPUs will cause additional overhead.  <em>pytest_mproc</em> kicks off all worker threads up front, and
+<p>Oversubscribing CPUs will cause additional overhead.  <em>pytest_mproc</em> kicks off all worker threads up front, and
 each worker does identical processing to independently come up with the list of tests.  When the number of
 threads is less than or equal to the number of cores (“a batch”), this adds little overhead.  Once beyond that, each
 additional (partial) batch will add more overhead, as the CPU must be split across multiple threads for some or all
 cores.</p>
 </div>
-</div>
-<div class="section" id="disabling-pytest-mproc-from-command-line">
-<h1>Disabling <em>pytest_mproc</em> from Command Line<a class="headerlink" href="#disabling-pytest-mproc-from-command-line" title="Permalink to this headline">¶</a></h1>
-<p>To disable mproc (overriding all other pytest-mproc-related flags), specify “–diable-mproc True” on the command line.</p>
-</div>
-<div class="section" id="top-level-command-line-configuration-options">
-<h1>Top-Level Command Line Configuration Options<a class="headerlink" href="#top-level-command-line-configuration-options" title="Permalink to this headline">¶</a></h1>
-<p>Aside from specifying the number of cores, the user can optionally specify the maximum number of active connections
-allowed during distributed processing.  The <em>multiprocessing</em> module can get bogged down and dwell on one thread or
-even deadlock when too many connection requests are made at one time to the main process.  To alleviate this,
-the number of allowed simultaneous connections is throttled, with a default of 24 maximum connections.  The user can
-over ride this using the <em>–max-simultanous-connections</em> option.</p>
-</div>
-<div class="section" id="grouping-tests">
-<h1>Grouping Tests<a class="headerlink" href="#grouping-tests" title="Permalink to this headline">¶</a></h1>
-<p>By default all tests are assumed independently runnable and isolated from one another.  That is the order in which they
-run within which process does not matter.  You may wish to specify a group of tests that must run serially within the
-same process/thread.  To do this, annotate each test using a unique name for the group:</p>
+<p>When going beyond the simple one-machin parallelization, certain terminology is used.  The term ‘node’ is used to
+refer to a single machine within a group of machines (over which execution is distributed).  The term ‘main node’
+refers to the orchestrator of the tests, responsible for overseeing test execution and reporting results to the
+user.  The term ‘worker’ is used to specify a single process running on a node that is doing the actual test
+execution.  The main node can distrbitue tests acros multiple other nodes, with multiple worker processes executing
+within each node.</p>
+<section id="disabling-pytest-mproc-from-command-line">
+<h2>Disabling <em>pytest_mproc</em> from Command Line<a class="headerlink" href="#disabling-pytest-mproc-from-command-line" title="Permalink to this heading">¶</a></h2>
+<p>To disable mproc (overriding all other pytest-mproc-related flags), specify “–diable-mproc True” on the command line.
+Running without the –cores option will also run as normal, with no invocations of pytest_mproc features.</p>
+</section>
+</section>
+<section id="grouping-tests">
+<h1>Grouping Tests<a class="headerlink" href="#grouping-tests" title="Permalink to this heading">¶</a></h1>
+<p>By default all tests are assumed independently runnable and isolated from one another, and the order in which they
+run within which process does not matter.  To group tests that must run serially within the
+same process/thread, annotate each test using a unique name for the group:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest_mproc</span>
 <span class="n">TEST_GROUP1</span> <span class="o">=</span> <span class="s2">&quot;group1&quot;</span>
 
@@ -127,7 +132,7 @@ same process/thread.  To do this, annotate each test using a unique name for the
 <p>Likewise, you can use the same annotation on test class to group all test methods within that class:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest_mproc</span>
 
-<span class="n">TEST_GROUP_CLASS</span> <span class="o">=</span> <span class="n">GroupTag</span><span class="p">(</span><span class="s2">&quot;class_group&quot;</span><span class="p">)</span>
+<span class="n">TEST_GROUP_CLASS</span> <span class="o">=</span> <span class="s2">&quot;class_group&quot;</span>
 
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mproc</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">TEST_GROUP_CLASS</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">TestClass</span><span class="p">:</span>
@@ -140,10 +145,26 @@ same process/thread.  To do this, annotate each test using a unique name for the
 </div>
 <p>This is useful if the tests are using a common resource for testing and parallelized execution of tests might
 result in interference.</p>
-<div class="section" id="configuring-test-execution-of-groups">
-<h2>Configuring Test Execution of Groups<a class="headerlink" href="#configuring-test-execution-of-groups" title="Permalink to this headline">¶</a></h2>
-<p>As discussed below, <em>pytest_mproc</em> allows execution across multiple machines/indepenent processes.  There are two
-ways to specify how a group of tests will be executed by using the <em>restric_to</em> parameter of the
+<p>Groups can also be specified as class <em>pytest_mproc.data.GroupTag</em> instead of a string, to prioritize the whole group
+and restrict the group to running within a single worker or withtin a single node machine:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest_mproc</span>
+<span class="kn">from</span> <span class="nn">pytest_mproc</span> <span class="kn">import</span> <span class="n">GroupTag</span><span class="p">,</span> <span class="n">TestExecutionConstraint</span>
+
+<span class="n">TEST_GROUP_CLASS</span> <span class="o">=</span> <span class="n">GroupTag</span><span class="p">(</span><span class="s2">&quot;class_group&quot;</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">restritc_to</span><span class="p">:</span> <span class="n">TestExecutionConstraint</span><span class="o">.</span><span class="n">SINGLE_PROCESS</span><span class="p">)</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mproc</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">TEST_GROUP_CLASS</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">TestClass</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">test_method1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">test_method2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="k">pass</span>
+</pre></div>
+</div>
+<section id="configuring-test-execution-of-groups">
+<h2>Configuring Test Execution of Groups<a class="headerlink" href="#configuring-test-execution-of-groups" title="Permalink to this heading">¶</a></h2>
+<p>As discussed below, <em>pytest_mproc</em> allows execution across multiple machines/independent processes.  There are two
+ways to specify how a group of tests will be executed by using the <em>restrict_to</em> parameter of the
 <em>pytest_mproc.group</em> decorator.  This can take one of two values.</p>
 <ol class="arabic simple">
 <li><p><em>pytest_mproc.TestExecutionConstraint.SINGLE_PROCESS</em> - this is the default value.  This specifies that the tests
@@ -153,19 +174,19 @@ node of the system, but within that node the set of tests can be distributed amo
 </ol>
 <p>If specifying <em>SINGLE_NODE</em> execution in the context of running a single <em>pytest</em> process (and therefore a single node),
 the only value provided is the ability to specify a hierarchy of priorities.</p>
-</div>
-</div>
-<div class="section" id="a-matter-of-priority">
-<h1>A Matter of Priority<a class="headerlink" href="#a-matter-of-priority" title="Permalink to this headline">¶</a></h1>
+</section>
+</section>
+<section id="a-matter-of-priority">
+<h1>A Matter of Priority<a class="headerlink" href="#a-matter-of-priority" title="Permalink to this heading">¶</a></h1>
 <p>You can also specify a priority for test execution using the <em>pytest_mproc.priority</em> decorator:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest_mproc</span>
 
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mpro</span><span class="o">.</span><span class="n">priority</span><span class="p">(</span><span class="n">pytest_mproc</span><span class="o">.</span><span class="n">DEFAULT_PRIORITY</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+<span class="nd">@pytest_mproc</span><span class="o">.</span><span class="n">priority</span><span class="p">(</span><span class="n">pytest_mproc</span><span class="o">.</span><span class="n">DEFAULT_PRIORITY</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_function</span><span class="p">():</span>
    <span class="k">pass</span>
 </pre></div>
 </div>
-<p>Groups with lower interger priority value are scheduled before those with a higher priority value.  Thus, a
+<p>Groups with lower integer priority value are scheduled before those with a higher priority value.  Thus, a
 group with priority <em>pytest_mproc.DEFAULT_PRIORITY-1</em> will be scheduled before a group with priority
 <em>pytest_mproc.DEFAULT_PRIORITY-2</em>.  Of course, the default priority of <em>pytest_mproc.DEFAULT_PRIORITY</em>  is used if
 unspecified.</p>
@@ -175,164 +196,290 @@ the priorities are scoped.  That is, at a global level, the priority of a group 
 execution order relative to all other top-level tests or test groups. For tests within a group, the priority of each test
 will determine the order of execution only within that group.  <em>pytest_mproc</em> does not guarantee order of
 execution for tests or test groups with the same priority.</p>
-<p>If you specify a priorty on a class of tests, all test methods within that class will have that priority, unless
+<p>If you specify a priority on a class of tests, all test methods within that class will have that priority, unless
 a specific priority is assigned to that method through its own decorator.  In that class, the decorator for the class
 method is used.</p>
-</div>
-<div class="section" id="a-global-ly-scoped-fixture">
-<h1>A ‘global’-ly Scoped Fixture<a class="headerlink" href="#a-global-ly-scoped-fixture" title="Permalink to this headline">¶</a></h1>
-<p>As is the case with <em>pytest_xdist</em> plugin, <em>pytest_mproc</em> uses multiprocessing module to achieve parallel concurrency.
-This raises interesting behaviors about ‘session’ scoped fixtures.  Each subprocess that is launched will create its own
-session-level fixture;  in other words, you can think of a session as a per-process concept, with one session-level
-fixture per process.  This is often not obvious to test developers. Many times, a global fixture is needed, with a
+</section>
+<section id="globally-scoped-fixtures">
+<h1>Globally Scoped Fixtures<a class="headerlink" href="#globally-scoped-fixtures" title="Permalink to this heading">¶</a></h1>
+<p><em>pytest_mproc</em> uses multiprocessing module to achieve parallel concurrency.
+This raises interesting behaviors when using <em>pytest</em> and ‘session’ scoped fixtures.
+For multiple-process execution, Each subprocess that is launched will create its own
+session-level fixture;  in other words,  a session in the context of <em>pytest</em> is a per-process concept,
+with one session-level fixture for each process.  ‘session’ becomes a misnomer in <em>pytest</em> in this way as the term
+was not conceived with parallelization in mind.  This is often not obvious to test developers.
+At times, a global fixture is needed, with a
 single instantiation across all processes and tests.  An example might be setting up a single test database.
 (NOTE: when running on more than one machine, also see ‘node-level’ fixtures discussed below)</p>
-<p>To achieve this, <em>pytest_mproc</em> adds a new scope: ‘global’. Behind the scenes, the system uses pythons <em>multiprocessing</em>
+<p>To achieve this, <em>pytest_mproc</em> adds a ‘global’ scope feature, instantiated only once and shared with all nodes.
+Behind the scenes, the system uses pythons <em>multiprocessing</em>
 module’s BaseManager to provide this feature.  This is mostly transparent to the developer, with one notable exception.
 In order to communicate a fixture globally across multiple <em>Process</em> es, the object returned (or yielded) from a
-globally scoped fixture must be ‘picklable’.</p>
-<p>The ‘global’ scope is a level above ‘session’ in the hierarchy.  That means that globally scoped fixtures can only
-depend on other globally scoped fixtures.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Values returned or yielded from a fixture with scope’global’ must be picklable so as to be shared across multiple
-independent subprocesses.</p>
-</div>
+globally scoped fixture must be ‘picklable’.  To declare a fixture global:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest</span>
 
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;global&#39;</span><span class="p">)</span>
+<span class="nd">@pytest_mproc</span><span class="o">.</span><span class="n">fixtures</span><span class="o">.</span><span class="n">global_fixture</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">&quot;some.host&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=&lt;</span><span class="n">some</span> <span class="n">port</span><span class="p">,</span> <span class="ow">or</span> <span class="kc">None</span> <span class="n">to</span> <span class="n">pick</span> <span class="n">a</span> <span class="n">random</span> <span class="n">free</span> <span class="n">port</span><span class="o">&gt;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">globally_scoped_fixture</span><span class="p">()</span>
     <span class="o">...</span>
 </pre></div>
 </div>
-<div class="section" id="tips-for-using-global-scope-fixture">
-<h2>Tips for Using Global Scope Fixture<a class="headerlink" href="#tips-for-using-global-scope-fixture" title="Permalink to this headline">¶</a></h2>
-<p>Admittedly, one has to think about how multiprocessing works to know what can and cannot be returned from a global
-test fixture.  Since they are “singletons”, one useful tip if you are using (singleton) classes (such as manager classses) to
-encaspulate logic, it is best not to put anything other than what is necessary as instance variables, and delegate
-them to class variable.  Also, you should design your fixture so that any other test not depending on it is not blocked
-while on that fixture.  Example code is shown blow</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest</span>
-<span class="kn">import</span> <span class="nn">multiprocessing</span>
-
-<span class="k">class</span> <span class="nc">Manager</span><span class="p">:</span>
-
-     <span class="c1"># not picklable, so keep at class level</span>
-    <span class="n">_proc</span><span class="p">:</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="n">hostname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Nont</span><span class="p">:</span>
-        <span class="o">...</span>
-        <span class="n">start_some_service</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">setup_resources</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Nont</span><span class="p">:</span>
-         <span class="n">hostname</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="mi">32873</span>
-         <span class="c1"># service is started i the background so as not to hold up the system</span>
-         <span class="bp">cls</span><span class="o">.</span><span class="n">_proc</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Procss</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
-        <span class="o">...</span>
-        <span class="k">return</span> <span class="n">hostname</span><span class="p">,</span> <span class="n">port</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">hostname</span><span class="p">:</span><span class="nb">str</span> <span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-         <span class="o">...</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_proc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Attempt top instantiate singleton more then once&quot;</span>
-        <span class="c1"># hostname and port are a str and int so easily Picklable</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_hostname</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setup_resources</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s2">&quot;Manager&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">shudown</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hostname</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_port</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_proc</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">hostname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hostname</span>
-
-     <span class="k">def</span> <span class="nf">port</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_port</span>
-
-
- <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;global&#39;</span><span class="p">)</span>
- <span class="k">def</span> <span class="nf">resource</span><span class="p">():</span>
-     <span class="c1"># called only once across all processes and for all tests</span>
-     <span class="k">with</span> <span class="n">Manager</span><span class="p">()</span> <span class="k">as</span> <span class="n">manager</span><span class="p">:</span>
-         <span class="k">yield</span> <span class="n">manager</span><span class="o">.</span><span class="n">hostname</span><span class="p">,</span> <span class="n">manager</span><span class="o">.</span><span class="n">port</span>
-</pre></div>
+<p>The global fixture is the highest level above ‘session’ in the hierarchy.  That means that globally scoped fixtures can only
+depend on other globally scoped fixtures.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Values returned or yielded from a global fixture must be picklable so as to be shared across multiple
+independent subprocesses.</p>
 </div>
+<p>Global fixtures can be passed any keyword args supported by <em>pytest.fixture</em> EXCEPT autouse.</p>
 <p><em>pytest_mproc</em> guarantees that all fixtures are in place before worker clients in other processes access them, so as
 not to cause a race condition.</p>
+</section>
+<section id="node-scoped-fixtures">
+<h1>Node-scoped Fixtures<a class="headerlink" href="#node-scoped-fixtures" title="Permalink to this heading">¶</a></h1>
+<p>With the system now allowing execution of multiple workers on a single machine, and execution across multiple machines,
+this introduces another level of scoping of fixtures:  <em>node</em>-scoped fixtures.  A node-level fixture is
+instantiated once per node and such instance is only available to workers (aka all test processes) on that specific node.</p>
+<p>To declare a fixture to be scoped to a node, which declares the optional autouse:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="nd">@pytest_mproc</span><span class="o">.</span><span class="n">fixtures</span><span class="o">.</span><span class="n">node_fixture</span><span class="p">(</span><span class="n">autouse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">globally_scoped_fixture</span><span class="p">()</span>
+    <span class="o">...</span>
+</pre></div>
 </div>
+<p>Node fixtures can be passed any keyword args supported by pytest.fixure.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Values returned or yielded from a fixture with scope to a node must be picklable so as to be shared across multiple
+independent subprocesses.</p>
 </div>
-<div class="section" id="a-safe-tmpdir-fixture">
-<h1>A Safe <em>tmpdir</em> Fixture<a class="headerlink" href="#a-safe-tmpdir-fixture" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="a-safe-tmpdir-fixture">
+<h1>A Safe <em>tmpdir</em> Fixture<a class="headerlink" href="#a-safe-tmpdir-fixture" title="Permalink to this heading">¶</a></h1>
 <p><em>pytest_mproc</em> provides its own fixtures for creating temporary directories: <em>mp_tmpdir_factory</em>, a fixture with a
 “<em>create_tmpdir</em>” method for creating multiple temporary directories within a test procedure, and a
 <em>mp_tmpdir</em> directory for creating a single temporary directory.  Other plugins providing similar featurs can have
 race conditions causing intermittent (if infrequent) failures.  This plugin guarantees to be free of race conditions
 and safe in the context of <em>pytest_mproc</em>’s concrurrent test framework.</p>
-</div>
-<div class="section" id="advanced-testing-on-a-distributed-set-of-machines">
-<h1>Advanced: Testing on a Distributed Set of Machines<a class="headerlink" href="#advanced-testing-on-a-distributed-set-of-machines" title="Permalink to this headline">¶</a></h1>
-<p><em>pytest_mproc</em> has support for running test distributed across multiple mahcines.</p>
+<p>(the regular pytest tmpdir and corresponding factory fixtures have a race condition that can cause a tmp dir to
+be removed that is in use by another thread worker in any distributed execution)</p>
+</section>
+<section id="advanced-testing-on-a-distributed-set-of-machines">
+<h1>Advanced: Testing on a Distributed Set of Machines<a class="headerlink" href="#advanced-testing-on-a-distributed-set-of-machines" title="Permalink to this heading">¶</a></h1>
+<p><em>pytest_mproc</em> has support for running test distributed across multiple machines.</p>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
-<p>This feature may not be as robust against fault tolerance.  The basic functionality exists, but robustness
-against exception in fixtures, etc., has not been fully tested</p>
+<p>You should validate that your test code does not have any top-level errors before running distributed,
+as common errors will be replicated and shown in the output for all workers, potentially overwhelming the log.</p>
 </div>
+<p>The concept is that one node will act as the main node, which is what the user launches to start the tests. That
+node populates the queue of tets, and collects and reports test status. The other nodes are worker nodes (either
+launched automatically or manually) and are responsible for pull tests  (or batches of tests explicitly grouped)
+one-by-one until the test queue is exhausted, executing each test as it is pulled, returning the status of the test
+back to the main node.  When running distributed, the number of cores specified is the number of cores <em>per worker</em>.
+A worker is a single process that is pulling the tests, executing each one and reporting status.</p>
+<section id="complexities-of-distributed-execution">
+<h2>Complexities of Distributed Execution<a class="headerlink" href="#complexities-of-distributed-execution" title="Permalink to this heading">¶</a></h2>
+<p><em>pytest_mproc</em> requires a common server to handle the creation of a test and result queue and control elements, used
+to orchestrate test execution.  The machine that this server runs on must allow incoming connections.  There
+are options for where this server can run.  The node hosting the main process (where the tester kicks off the
+tests) is indeed one such option. However, for a tester running on a laptop testing across a cloud of device
+(as an example), it is unlikely that the nodes in the cloud will be able to call into the tester’s laptop.  Firewall
+restrictions will undoubtedly prevent this.   Understand the nature of the system you are using for
+distributed testing.</p>
+<p>Automated distributed testing, <em>pytest_mproc</em> uses ssh to deploy and execute remote worker tasks.  The test infrastructure
+must therefore provide ssh access (passwordless) into the remote nodes.  A configuration file must also be defined
+to define the structure of the bundle to be deployed to the worker nodes (discussed later).</p>
+<p>Inter-process communication is secure and requires a common authentication token.  For manual deployment to workers,
+this token must be shared across all nodes.  Such sharing is up to the user to implement and can be achieved through a
+callback to retrieve the authentication token:</p>
+<p>This should be called globally, presumably close to the top of your <em>conftest.py</em> file.  If you with not to use
+a fixed port for the orchestration server, the tester can also provide a callback for allocating ports (otherwise
+if not port is specified, a random free port will be allocated):</p>
+</section>
+<section id="manual-distributed-execution">
+<h2>Manual Distributed Execution<a class="headerlink" href="#manual-distributed-execution" title="Permalink to this heading">¶</a></h2>
+<p>This section documents how to bring up the main node, and then manually bring up workers on (presumably) remote
+nodes.</p>
+<p>To start the main node, use the “–as-main” command line argument, specifying the port the server will listen on:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>% pytest --as-main &lt;host&gt;:&lt;port&gt; ...
+</pre></div>
+</div>
+<p>When <em>–as-main</em> argument is present, N represents the number of cores to use on each worker when
+automated distributed testing is invoked.  This sets up the node as main, responsible for orchestrating test
+execution across multiple workers. In this scenario, workers must be started manually.  See
+section on automated distributed testing below if desired to run from a single <em>pytest</em> invocation.  In this
+scenario, specifying <em>–num-cores</em> here will allow workers to also start on the local node, otherwise no workers
+will be invoked under this command (delegated to manual bring-up on other machines/processes)</p>
+<p>The host an port specified may also be on a remote machine (see section above on why such a scenario might be needed).
+In this case, the orchestration manager must be started manually as well.  The tester can create an application
+that calls the main function to start the server:</p>
+<p>To start each the worker node, assuming the necessary deployment of test code has been made on the node:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>% pytest --num_cores &lt;N&gt; --as-worker &lt;host&gt;:&lt;port&gt;
+</pre></div>
+</div>
+<p>Here, N must be greater than or equal to 1;  multiple workers can be invoked on a single node.
+Of course,  multiple worker nodes can be used as well. Each worker will attempt to connect
+to the main  node for a period of 30 seconds at which point it gives up and exits with na error.</p>
+</section>
+</section>
+<section id="automate-distributed-execution">
+<h1>Automate Distributed Execution<a class="headerlink" href="#automate-distributed-execution" title="Permalink to this heading">¶</a></h1>
+<p><em>pytest_mproc</em> supports automated deployment and execution on a set of remote worker machines.  This requires a method
+to determine the remote hosts (and parameters associated with those hosts as needd) as well as a definition
+of the project structure to bundle and deploy to remote host machines.
+Deployments and execution are conducted vis <em>ssh</em> and any port referenced in options is the <em>ssh</em> port to be used.</p>
+<section id="one-time-setup">
+<h2>One-time Setup<a class="headerlink" href="#one-time-setup" title="Permalink to this heading">¶</a></h2>
+<p>Project definition consists of defining a set of properties in a config file in JSON format:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w"> </span><span class="nt">&quot;project_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A_name_associated_with_the_project_under_test&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w"> </span><span class="nt">&quot;test_files&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./path/to/project_tests/*.pattern&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w"> </span><span class="nt">&quot;prepare_script&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./path/to/test/setup/script&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w"> </span><span class="nt">&quot;finalize_script&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./path/to/test/teardown/script&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>These have the following meanings for creating the bundle to send to workers:</p>
+<ul class="simple">
+<li><p><em>test_files</em>: Location of all files to be bundled necessary to execute tests.  If a <em>requirements.txt</em>
+file is present, these requirements will be instsalled via <em>pip</em>. All files must be relative paths,
+relative to the project config file itself</p></li>
+<li><p><em>prepare_script</em>: an optional script that is run before pytest execution on a remote host, to prep the
+test environment if needed.  The recommendation is to make use of pytest fixtures, however.</p></li>
+<li><p><em>finalize_script</em>: an optional script that is run after pytest execution on a remote host, to tear down the
+test environment if needed.  The recommendation is to make use of pytest fixtures, however.</p></li>
+</ul>
+<p>The information provided must be complete to run tests in isolation, without reference to any other local files as
+such files will most likely not be available on remote nodes.   Note that any requirements that are installed are
+cached so that after first execution, the overhead of <em>pip install</em> will be minimal.</p>
+<p>Project configurations are specified in a file with the path to that file specified on the command line via
+the <em>–project_structure</em> command line option.  Optionally, if not provided and <a href="#id1"><span class="problematic" id="id2">*</span></a>ptmproc_project.cfg” file
+exists in the current working directory of test execution, that file will be used.</p>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
-<p>Throttling of connections only happens on a per-node basis, not globally.  It may be possible to overwhelm
-the main node if you are using too many remote workers, causing deadlock</p>
+<p>All paths specified in the project configuration file must be relative to the configuration file itself,
+and should be at or below the directory level of the configuration file</p>
 </div>
-<p>The concept is that one node will act as the main node, collecting and reporting test status, while all others
-will act as clients – executing tests and reporting status back the the main node.  To start the main node,
-use the “–as-server” command line argument, specifying the port the server will listen on:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>% pytest --num_cores &lt;N&gt; --as-server &lt;port&gt; ...
+<p>Any SSH configuration can be specified programmatically if desired.  This allows for a common ssh username or
+credentials specification that is common to remote nodes, so that they need not be specified repeatedly on
+command line, for example.  Passwordless ssh with proper authentication key set up is preferred, although a
+mechanism to retrieve secrets securely, such as an ssh password, works as well.  The following python functions
+provide the API for SSH configuration:</p>
+<p>Directories for caching  (e.g., where any test requirements are installed on a per-project-name basis peristently)
+as well as the temp directory where bundles are deployed can also be specified, can be configured:</p>
+<p>These will be common across all nodes, and thus all nodes must support the directory configuration.</p>
+</section>
+<section id="remote-hosts-specification">
+<h2>Remote Hosts Specification<a class="headerlink" href="#remote-hosts-specification" title="Permalink to this heading">¶</a></h2>
+<p>The remote hosts configuration (which nodes the tests execute) is specified on the command line through
+the <em>–remote-worker</em> command line option. The value of this option can take several forms:</p>
+<ul class="simple">
+<li><p>a fixed host specification in the form of “&lt;host&gt;[:&lt;port&gt;];optoin1=value1;…”;  the option/value pair can be
+repeated to specify multiple remote clients</p></li>
+<li><p>a file with line-by-line JSON content specifying the remote host/port and options as specified below; the option
+cannot be repeated</p></li>
+<li><p>an http end point that returns the remote host/port and options, again in line-by-line format.  The option can
+be repeated to specify backup end points as necessary</p></li>
+</ul>
+<p>Use of a server for managin a cloud of resources is discussed in more detail below.</p>
+<p>The format of the http response or in the file is in a line-by-line JSON format.  For example, if I am using pytest
+to drive execution from remote hosts against attached Android devices, the content might look like:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;host&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;host.name.or.ip&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;arguments&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;device&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ANDROID_DEVICE1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;argument1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;value1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;ENV_VAR&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;value1&quot;</span><span class="p">}}</span><span class="w"></span>
 </pre></div>
 </div>
-<p>When <em>–as-server</em> argument is presnt, N may be zero, indicating
-the process will wait indefinitely for workers on other nodes to be created to do the testing.  In
-this case, not tests will be executed on the main node.  If N &gt; 0, then test execution will start immediately
-on the main node following test setup;  as workers on other nodes come on line, they will pull tests from those
-remaining the queue and execute in parallel to the main.</p>
-<p>To start the client nodes:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>% pytest --num_cores &lt;N&gt; --as-client &lt;host&gt;:&lt;port&gt; <span class="o">[</span>--connection-timeout &lt;integer seconds&gt;<span class="o">]</span>
+<p>Arguments that are all upper case names will be passed to the remote host as environment variables.  All others will
+be passed to pytest as command line options in the form “–&lt;option&gt; &lt;value&gt;” and your pytest must be configured
+to add and accept those command line options.  There are a few command line options that are reserved for use
+by <em>pytest_mproc</em>:
+* <em>cores</em> : specifies the number of cores (worker threads) to instantiate on the remote host;  if not specified
+the number of cores specified on the main host command line will be used (see below)
+* <em>jump_host</em> : if specified, this host:port pair will be used to add a jump host option when invoking ssh against
+the remote host</p>
+<section id="interface-pytest-mproc-with-a-cloud">
+<h3>Interface <em>pytest_mproc</em> with a Cloud<a class="headerlink" href="#interface-pytest-mproc-with-a-cloud" title="Permalink to this heading">¶</a></h3>
+<p>Hard-coding worker node ip addresses in a file or on a command line is not ideal.  Although it provides a
+brut-force method for ensuring viability of distributed testing without much setup, a more dynamic alternative
+is needed in most cases.  <em>pytest_mproc</em> provides an interface to interact with an externally developed
+http (micro) service as proxy for access into a cloud.  Reservation of resources (and relinquishing those
+resources when testing ends) is achieved by exercising this REST-ful interface.</p>
+<p>When using an http endpoint, <em>pytest_mproc</em> will do lazy loading of the response.  This is to cover the case where
+the request to the endpoint is based on a reservation system that reserves specific resources.  (One example is
+using pytest to drive device testing of a mobile or smart device.)  The resource may require
+preparation time before returning a resrouce back to the main host, or may only be able to
+return a subset of the requested resources until others become available.  In this way, <em>pytest_mproc</em> can
+start execution against the available resources while waiting for the others to become available (optimized
+execution strategy).</p>
+<p>If using a web backend, the first line of json should contain the following (with no return characters of course):</p>
+<p>The two optional URLs assume that the reservatio system is session-based and provides a way for <em>pytest_mproc</em> to end
+the session, as well as signal that the session is still active. The <em>heartbeat_url”  is a way for *pytest_mproc” to
+provide a heartbeat to the session/reservation system that the session is still active (to be provided at at least
+a 1Hz rate).  The *end_url</em> is a way for <em>pytest_mproc</em> to signal end of session (allowing the reservation system
+to relinquish any resources back to the system).  Both of these will be invoked as simplet GET requests.</p>
+</section>
+<section id="running-the-main-cli">
+<h3>Running the Main CLI<a class="headerlink" href="#running-the-main-cli" title="Permalink to this heading">¶</a></h3>
+<p>Distributed parallel execution from the command line can then be done through a single invocation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>% pytest --as-main<span class="s2">&quot;, &lt;server_host&gt;:&lt;server_port&gt; --cores 1 -k alg2 --project_structure path/to/project.cfg --remote-worker https://some.endpoint.com/reserver?count=5&quot;</span>
 </pre></div>
 </div>
-<p>Here, N must be greater than or equal to 1;  multiple workers can be invoked on a node, with possibly multiple client
-nodes. The client will attempt to connect to the main  node for a period of 30 seconds at which point it gives up and
-exits with na error.  If <em>–connection-timeout</em> is specified, the client will timeout and exit if it takes longer than
-the provided seconds to connect.  The default is 30 seconds.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p><em>pytest_mproc</em> does not have the facilities to launch testing on other external nodes.  The checkout of code on
-client machines and execution of the pytest command on client nodes falls outside of <em>pytest_mproc</em>’s scope and is
-the responsibility of the client</p>
-</div>
-<div class="section" id="node-scoped-fixtures">
-<h2>Node Scoped Fixtures<a class="headerlink" href="#node-scoped-fixtures" title="Permalink to this headline">¶</a></h2>
-<p>With the system now allowing execution of mutliple workers on a single machine, and execution across multiple machines,
-this introduces a new level of scoping of fixtures:  <em>node</em>-scoped fixtures.  A fixture scoped to ‘<em>node</em>’ is
-instantiated once per node and such instance is only available to workers on that node.  The ‘<em>global</em>’-scoped fixtures
-still hold the meaning of being scoped to the entirety of testing, one instance available to all workers across all
-machines (so thinkingg carefully about what you are providing in your <em>global</em> fixture!).</p>
-<p>To declare a fixture to be scoped to a node:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;node&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">node_scoped_fixture_function</span><span class="p">():</span>
-    <span class="o">...</span>
+<p>Note that pytest options not specific to pytest_mproc itself are passed along to the client workers (in this case,
+the “-k ale2” is pass along).  The “–cores” option is also passed to the worker client and ignores from the
+main server process (aka the main server process that is launched through this command will not execute any
+worker threads, leaving all work up to the remote clients).  If “cores” is a part of the options provided for
+a remote host as part of its configuration (as described above), it will override the value from this command line
+invocation.</p>
+<p>Breaking this down, lets say we are testing against Android devices on remote hosts and the https endpoint returns:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;host&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;host.name.or.ip1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;arguments&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;DEVICE_SERIAL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Z02348FHJ&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;default_orientation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;landscape&quot;</span><span class="p">}}</span><span class="w"></span>
+<span class="p">{</span><span class="nt">&quot;host&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;host.name.or.ip2&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;arguments&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;DEVICE_SERIAL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Z0B983HH1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;default_orientation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;portrait&quot;</span><span class="p">}}</span><span class="w"></span>
 </pre></div>
 </div>
-<div class="admonition caution">
-<p class="admonition-title">Caution</p>
-<p>As with global fixtures, node-level fixtures must return objects that are serializable (‘picklable’), as they
-must be shared across independent processes.</p>
+<p>Then the above command on the server will:</p>
+<ol class="arabic simple">
+<li><p>collect all test cases to be executed (pytest functionality)</p></li>
+<li><p>populate a test queue for workers to pull from with these cases</p></li>
+<li><p>in parallel, bundle, deploy and execute pytest on the worker threads</p></li>
+</ol>
+<p>Each worker host will:</p>
+<ol class="arabic simple">
+<li><p>collect all test cases to be executed (pytest functionality)</p></li>
+<li><p>have DEVICE_SERIAL available in <em>os.environ</em> during execution</p></li>
+<li><p>be provided the option <em>default_orientation</em> as given above</p></li>
+<li><p>launch with a single worker thread (cores = 1) providing a 1-to-1 worker-host-to-device</p></li>
+<li><p>each worker thread start a test loop that pulls each test from the main test queue and executes each test until
+the queue is exhausted</p></li>
+</ol>
+<p>If –cores were specified as 4, then each worker host would launch with 4 parallel worker threads, unless
+the https endpoint provided a “cores” option with a different value as an override.</p>
+</section>
+</section>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading">¶</a></h2>
+<p>Global and node scoped fixtures are maintained through a multirprocessing manager, and require assignemnt of a
+port.  Normally, the main process will find a free port (random selection) to use.  This behavior can be
+overridden by setting <em>PTMPROC_NODE_MGR_PORT</em> and <em>PTMPROC_GLOBALMGR_PORT</em> envorionment variables to specific
+port integger values.</p>
+<p>Setting <em>PTMPROC_VERBSE</em> to ‘1’ will spit out a lot of information about whay steps <em>pytest_mproc</em> is taking
+to execute.</p>
+</section>
+<section id="logs-and-artifacts">
+<h2>Logs and Artifacts<a class="headerlink" href="#logs-and-artifacts" title="Permalink to this heading">¶</a></h2>
+<p><em>pytest_mproc</em> will collect logs from remote workers and pull hem back to the main host.  By default,
+these are collected on the main host in “./artifacts” when running, but the location can be overriden by setting the
+environment variable PTMPROC_HOST_ARTIFACTS_DIR.</p>
+<p>On the worker nodes (when runing distributed automatically), the environment variable PTMPROC_WORKER_ARTIFACTS_DIR
+is set to tell pytest where to find the artifacts dir (absolute path) on the worker host.
+Setting this environment variable will
+have no effect, it is only read in at the beginning of the program. In other words, the location for workers
+is fixed by the program and cannot be changed, and should be used as the top-level
+location to store (or copy) artifacts.  Any artifacts collected under this directory will be zipped and pulled
+back to:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="k">$(</span>PTMPROC_HOST_ARTIFACTS_DIR<span class="k">)</span>/Worker-&lt;n&gt;/artifacts.zip
+</pre></div>
 </div>
-</div>
-</div>
+<p>If not set, “./artifacts” is used for PTMPROC_HOST_ARTIFACTS_DIR.</p>
+</section>
+</section>
 
 
           </div>
@@ -351,7 +498,7 @@ must be shared across independent processes.</p>
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="developer-guide.html">Developer Guide</a></li>
 </ul>
@@ -368,12 +515,12 @@ must be shared across independent processes.</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -390,7 +537,7 @@ must be shared across independent processes.</p>
       &copy;2020, John Rusnak.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
