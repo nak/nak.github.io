@@ -1,17 +1,20 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
     <title>Welcome to Bantam’s Documentation! &#8212; bantam  documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -30,32 +33,32 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="welcome-to-bantam-s-documentation">
-<h1>Welcome to Bantam’s Documentation!<a class="headerlink" href="#welcome-to-bantam-s-documentation" title="Permalink to this headline">¶</a></h1>
+  <section id="welcome-to-bantam-s-documentation">
+<h1>Welcome to Bantam’s Documentation!<a class="headerlink" href="#welcome-to-bantam-s-documentation" title="Permalink to this heading">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-</div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and Tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and Tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading">¶</a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
-</div>
-<div class="section" id="module-bantam.web">
-<span id="introduction"></span><h1>Introduction<a class="headerlink" href="#module-bantam.web" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="module-bantam">
+<span id="introduction"></span><h1>Introduction<a class="headerlink" href="#module-bantam" title="Permalink to this heading">¶</a></h1>
 <p>Welcome to Bantam, a framework for running a web server, built on top of <em>aiohttp</em>,
 poviding a convience-layer of abstraction.
 The framework allows users to define a Python web API through static methods of classes,
 and allows auto-generation of corresponding javascript APIs to match.  The developer need not
 be concerned about the details of how to map routes nor to understand the details of HTTP transactions.
 Ths developer need only focus on development of a web API as a Python interface.</p>
-<div class="section" id="getting-started">
-<h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<section id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading">¶</a></h2>
 <p>Let’s look at setting up a simple WebApplication on your localhost:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">asyncio</span>
-<span class="gp">... </span><span class="kn">from</span> <span class="nn">bantam.web</span> <span class="kn">import</span> <span class="n">web_api</span><span class="p">,</span> <span class="n">RestMethod</span><span class="p">,</span> <span class="n">WebApplication</span>
+<span class="gp">... </span><span class="kn">from</span> <span class="nn">bantam.http</span> <span class="kn">import</span> <span class="n">web_api</span><span class="p">,</span> <span class="n">RestMethod</span><span class="p">,</span> <span class="n">WebApplication</span>
 <span class="gp">...</span>
 <span class="gp">... </span><span class="k">class</span> <span class="nc">Greetings</span><span class="p">:</span>
 <span class="gp">...</span>
@@ -71,8 +74,8 @@ Ths developer need only focus on development of a web API as a Python interface.
 <span class="gp">... </span>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;html&gt;&lt;body&gt;&lt;p&gt;Welcome, </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;</span>
 <span class="gp">...</span>
 <span class="gp">... </span>    <span class="nd">@web_api</span><span class="p">(</span><span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;text/html&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">RestMethod</span><span class="o">.</span><span class="n">GET</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="nd">@staticmethod</span>
-<span class="gp">... </span>    <span class="k">async</span> <span class="k">def</span> <span class="nf">goodbye</span><span class="p">(</span><span class="n">type_of_day</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nd">@classmethod</span>
+<span class="gp">... </span>    <span class="k">async</span> <span class="k">def</span> <span class="nf">goodbye</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">type_of_day</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="gp">... </span>        <span class="sd">&quot;&quot;&quot;</span>
 <span class="gp">... </span><span class="sd">        Tell someone goodbye by telling them to have a day (of the given type)</span>
 <span class="gp">...</span><span class="sd"></span>
@@ -83,10 +86,10 @@ Ths developer need only focus on development of a web API as a Python interface.
 <span class="gp">...</span>
 <span class="gp">... </span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="n">app</span> <span class="o">=</span> <span class="n">WebApplication</span><span class="p">()</span>
-<span class="gp">... </span>    <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">start</span><span class="p">())</span> <span class="c1"># default to localhost HTTP on port 8080</span>
+<span class="gp">... </span>    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">start</span><span class="p">())</span> <span class="c1"># default to localhost HTTP on port 8080</span>
 </pre></div>
 </div>
-<p>Saving this to a file, ‘saultations.py’, you can run this start your server:</p>
+<p>Saving this to a file, ‘salutations.py’, you can run this start your server:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>% python3 salutations.py
 </pre></div>
 </div>
@@ -98,15 +101,18 @@ Ths developer need only focus on development of a web API as a Python interface.
 <p>to display various salutiations.</p>
 <p>To explain this code, the <em>&#64;web_api</em> decorator declares a method that is mapped to a route. The route is determined
 by the class name, in this case <em>Greetings</em>, and the method name. Thus, the “welcome” method above, as a member of
-<em>Greetings</em> class, is mapped to the route ‘/Greetings/welcome”.  There are some rules about methods declared as <em>&#64;web_api</em>:</p>
+<em>Greetings</em> class, is mapped to the route ‘/Greetings/welcome”.  There are some rules about methods declared as
+<em>&#64;web_api</em>:</p>
 <ol class="arabic simple">
-<li><p>They must be &#64;staticmethod’s.</p></li>
-<li><p>They must provide all type hints for parameters and return value,</p></li>
-<li><p>They must have parameters and return values of basic types (str, float, int bool) or a class that has both a serialize
-and deserialize method to convert to/from bytes (Actually there’s a little more to this, explained later)</p></li>
+<li><p>They can be &#64;staticmethods, &#64;classmethods or even instance methods (explained below), but &#64;classmethod or
+instance methods are prefered</p></li>
+<li><p>They must provide all type hints for parameters and return value.  The types must
+be of only specific kinds as explained below</p></li>
+<li><p>Be judicious on GET vs POST, particuraly being mindfl of the amount of data to be passed in parameters as
+wll as returned.  Large data transfers should use POST</p></li>
 </ol>
 <p>The query parameters provided in the full URL are mapped to the parameters in the Python method.  For example,
-the query parameter name=Box in the first uRL above maps to the <em>name</em> parameter of the <em>Greetings.welcome</em> method,
+the query parameter name=Box in the first URL above maps to the <em>name</em> parameter of the <em>Greetings.welcome</em> method,
 with ‘Bob’ as the value.
 The query parameters are translated to the value and type expected by the
 Python API. If the value is not convertible to the proper type, an error code along with reason are returned.
@@ -116,39 +122,41 @@ payload of the request (not query parameters) as a simple JSON dictionary.</p>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
 <p>Although the code prevents name collisions, the underlying (automated) routes do not, and a route must be unique.
-Thus, each pair of class/method declared as a &#64;web_api must be unique, including across differing modules.</p>
+Thus, each pair of class/method declared as a &#64;web_api must be unique, even across differing modules.</p>
 </div>
-</div>
+</section>
 <p>The specific WebApplication API is simple, and only the <em>start</em> method is of importance:</p>
 <dl class="py class">
-<dt id="bantam.web.WebApplication">
-<em class="property">class </em><code class="sig-prename descclassname">bantam.web.</code><code class="sig-name descname">WebApplication</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">static_path</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Union<span class="p">[</span>pathlib.Path<span class="p">, </span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">js_bundle_name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">router</span><span class="p">:</span> <span class="n">None</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">middlewares</span><span class="p">:</span> <span class="n">Iterable<span class="p">[</span>Callable<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">()</span></em>, <em class="sig-param"><span class="n">handler_args</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Mapping<span class="p">[</span>str<span class="p">, </span>Any<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">client_max_size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1048576</span></em>, <em class="sig-param"><span class="n">debug</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="default_value">Ellipsis</span></em><span class="sig-paren">)</span><a class="headerlink" href="#bantam.web.WebApplication" title="Permalink to this definition">¶</a></dt>
-<dd><p>Main class for running a WebApplication server. See the docs for <em>aiohttp</em> for information on the various
-parameters.  Additional parameters are:</p>
+<dt class="sig sig-object py" id="bantam.http.WebApplication">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bantam.http.</span></span><span class="sig-name descname"><span class="pre">WebApplication</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">static_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">js_bundle_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_max_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1048576</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">using_async</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Ellipsis</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bantam.http.WebApplication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main class for running a WebApplication server. See the documentation for <em>aiohttp</em> for information on the various
+parameters.  Additional parameters for this class are:</p>
 <dl class="field-list simple">
-<dt class="field-odd">&#64;param static_path</dt>
+<dt class="field-odd">Static_path<span class="colon">:</span></dt>
 <dd class="field-odd"><p>root path to where static files will be kept, mapped to a route “/static”, if provided</p>
 </dd>
-<dt class="field-even">&#64;param js_bundle_name</dt>
-<dd class="field-even"><p>the name of the javascript file, <strong>without</strong> exetnesion, where the client-side API
+<dt class="field-even">Js_bundle_name<span class="colon">:</span></dt>
+<dd class="field-even"><p>the name of the javascript file, <strong>without</strong> exetension, where the client-side API
 will be generated, if provided</p>
 </dd>
 </dl>
 <dl class="py exception">
-<dt id="bantam.web.WebApplication.DuplicateRoute">
-<em class="property">exception </em><code class="sig-name descname">DuplicateRoute</code><a class="headerlink" href="#bantam.web.WebApplication.DuplicateRoute" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="bantam.http.WebApplication.DuplicateRoute">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DuplicateRoute</span></span><a class="headerlink" href="#bantam.http.WebApplication.DuplicateRoute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raised if an attempt is made to register a web_api function under an existing route</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="bantam.web.WebApplication.start">
-<em class="property">async </em><code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">host</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Union<span class="p">[</span>str<span class="p">, </span>Iterable<span class="p">[</span>str<span class="p">]</span><span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">port</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">shutdown_timeout</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">60.0</span></em>, <em class="sig-param"><span class="n">ssl_context</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>ssl.SSLContext<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">backlog</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">128</span></em>, <em class="sig-param"><span class="n">handle_signals</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">reuse_address</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">reuse_port</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#bantam.web.WebApplication.start" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="bantam.http.WebApplication.start">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modules</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shutdown_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ssl_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">SSLContext</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backlog</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handle_signals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reuse_address</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reuse_port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#bantam.http.WebApplication.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>start the app</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>host</strong> – host of app, if TCP based</p></li>
-<li><p><strong>port</strong> – port to handle requests on (to listen on) if TCP based</p></li>
+<li><p><strong>modules</strong> – list of name of modules to import that contain the &#64;web_api definitions to use, must not be
+empty and will be imported to load the &#64;web_api definitions</p></li>
+<li><p><strong>host</strong> – optional host of app, defaults to ‘127.0.0.1’</p></li>
+<li><p><strong>port</strong> – optional port to listen on (TCP)</p></li>
 <li><p><strong>path</strong> – path, if using UNIX domain sockets to listen on (cannot specify both TCP and domain parameters)</p></li>
 <li><p><strong>shutdown_timeout</strong> – force shutdown if a shutdown call fails to take hold after this many seconds</p></li>
 <li><p><strong>ssl_context</strong> – for HTTPS server; if not provided, will default to HTTP connection</p></li>
@@ -166,69 +174,32 @@ on Windows.</p></li>
 
 </dd></dl>
 
-<div class="section" id="module-bantam.js">
-<span id="client-side-code-generation"></span><h2>Client-Side Code Generation<a class="headerlink" href="#module-bantam.js" title="Permalink to this headline">¶</a></h2>
-<p>Bantam provides the ability to auto-generate client-side javascript code to abstract the details of makting
-HTTP requests to the server.  This abstraction implies that the developer never need to know about routes,
-formulating URLs, how to make a POST request, how to stream data over HTTP, etc!</p>
-<p>To generate client side code, create a Python source file – let’s name it generator.py –
-and import all of the classes containing &#64;web_api’s
-to be generated. Then add the main entry poitn to generate the javascript code, like so:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bantam.js</span> <span class="kn">import</span> <span class="n">JavascriptGenerator</span>
-<span class="gp">... </span><span class="kn">from</span> <span class="nn">salutations</span> <span class="kn">import</span> <span class="n">Greetings</span>
-<span class="gp">...</span>
-<span class="gp">... </span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;salutations.js&#39;</span><span class="p">,</span> <span class="s1">&#39;bw&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output</span><span class="p">:</span>
-<span class="gp">... </span>       <span class="n">JavascriptGenerator</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">out</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">skip_html</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Run the script as so:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>% python generate.py
-</pre></div>
-</div>
-<p>With the above Greetings example, the generated javasctipt code will mimic the Python:</p>
-<div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">javascript code auto-generated from Python server’s web API</span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
-<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">bantam</span> <span class="p">{};</span>
-<span class="nx">bantam</span><span class="p">.</span><span class="nx">salutations</span> <span class="o">=</span> <span class="kr">class</span> <span class="p">{};</span>
-<span class="nx">bantam</span><span class="p">.</span><span class="nx">salutations</span><span class="p">.</span><span class="nx">Greetings</span> <span class="o">=</span> <span class="kr">class</span> <span class="p">{</span>
-      <span class="nx">constructor</span><span class="p">(</span><span class="nx">site</span><span class="p">){</span><span class="k">this</span><span class="p">.</span><span class="nx">site</span> <span class="o">=</span> <span class="nx">site</span><span class="p">;}</span>
-
-      <span class="cm">/*</span>
-<span class="cm">      Welcome someone</span>
-<span class="cm">      The response will be provided as the (first) parameter passed into onsuccess</span>
-
-<span class="cm">      @param {function(string) =&gt; null} onsuccess callback inoked, passing in response from server on success</span>
-<span class="cm">      @param {function(int, str) =&gt; null}  onerror  callback upon error, passing in response code and status text</span>
-<span class="cm">      @param {{string}} name name of person to greet</span>
-<span class="cm">      */</span>
-      <span class="nx">welcome</span><span class="p">(</span><span class="nx">onsuccess</span><span class="p">,</span> <span class="nx">onerror</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
-         <span class="p">...</span>
-      <span class="p">}</span>
-
-       <span class="cm">/*</span>
-<span class="cm">       Tell someone goodbye by telling them to have a day (of the given type)</span>
-<span class="cm">       The response will be provided as the (first) parameter passed into onsuccess</span>
-
-<span class="cm">       @param {function(string) =&gt; null} onsuccess callback inoked, passing in response from server on success</span>
-<span class="cm">       @param {function(int, str) =&gt; null}  onerror  callback upon error, passing in response code and status text</span>
-<span class="cm">       @param {{string}} type_of_day adjective describing type of day to have</span>
-<span class="cm">       */</span>
-      <span class="nx">goodbye</span><span class="p">(</span><span class="nx">onsuccess</span><span class="p">,</span> <span class="nx">onerror</span><span class="p">,</span> <span class="nx">type_of_day</span><span class="p">)</span> <span class="p">{</span>
-        <span class="p">...</span>
-      <span class="p">}</span>
-<span class="p">};</span>
-</pre></div>
-</div>
-</div>
-<p>The code maintains the same hierarchy in namespaces as modules in Python, albeit under a global <em>bantam</em> namespace.
-This prevents potential namespace collisions.  The signatures of the API mimic those defined in the Pyhon codebase,
-with the noted exception of the <em>onsuccess</em> and <em>onerror</em> callbacks as the first two parameters.
-This is typical of how plain javascript handles asynchronous transactions:  rather than returning a value or raising an
-exception, these callbacks are invoked instead, upon response from the server.</p>
-<div class="section" id="generation-on-the-fly">
-<h3>Generation on the fly<a class="headerlink" href="#generation-on-the-fly" title="Permalink to this headline">¶</a></h3>
-<p>As an even greater convenience, the code can be generated on the fly, when the <em>WebApplication</em> is created.
+<p>Of particular interest is the modules parameter of the start method.  This determines which modules and therefore
+which classes and their the &#64;web_api definitions are loaded.</p>
+</section>
+<section id="allowed-type-annotations">
+<h1>Allowed Type Annotations<a class="headerlink" href="#allowed-type-annotations" title="Permalink to this heading">¶</a></h1>
+<p>Being http-based, the magic behind the scenes in abstracting the HTTP protocol away from the client occurs through
+json serialization and deserialization.  This means that only certain type hints are allowed in the signature of a
+method decorated with &#64;web_api:</p>
+<ol class="arabic simple">
+<li><p>The basic builtins of <em>int</em>, <em>float</em>, <em>str</em>, <em>bool</em></p></li>
+<li><p>For arguments, the builtins of <em>list</em>, <em>set</em>, <em>tuple</em> and <em>dict</em>; the return type must be explicit
+(e.g. <em>Dict[Union[int, str]]</em>),as the system must know the type when converting fom a generic json string</p></li>
+<li><p>Anything hat is decorated with &#64;dataclass and whose element types meet these criteria (recursively)</p></li>
+<li><p>Any typing <em>Dict</em>, <em>List</em>, <em>Set</em>, <em>Tuple</em>, provided the (key and) element type recursively meet these criteria</p></li>
+<li><p>Use of <em>Union</em> and <em>Optional</em> are allowed</p></li>
+</ol>
+<p>All arguments and the return type must be explicitly specified in the signature of &#64;web_api-decorated methods.</p>
+</section>
+<section id="client-side-code-generation">
+<h1>Client-Side Code Generation<a class="headerlink" href="#client-side-code-generation" title="Permalink to this heading">¶</a></h1>
+<p>As an even greater convenience,
+Bantam provides means of auto-generating both javascript and client code to interact with a bantam-enabled application.
+Javascript in particular can be generate on-the-fly and served upon startup.</p>
+<section id="javascript">
+<h2>Javascript<a class="headerlink" href="#javascript" title="Permalink to this heading">¶</a></h2>
+<p>the code can be generated on the fly, when the <em>WebApplication</em> is created.
 By providing two parameters to the init call to your <em>WebApplication</em>:</p>
 <ul class="simple">
 <li><p><em>static_path</em>: the root path to serve static files</p></li>
@@ -249,16 +220,93 @@ is free to ignore the details of the inner works of routes and HTTP transactions
 <p>Furthermore, the web api that is registered is also directly callable as a Python function.  This engenders the
 concept of “library-as-a-service”, where the code can act directly as a library or as a distributed Rest-ful
 service transparently to the caller.</p>
+<p>To provide more detail on what this generation look like:</p>
+<span class="target" id="module-bantam.js"></span><p>Bantam provides the ability to auto-generate client-side javascript code to abstract the details of makting
+HTTP requests to the server.  This abstraction implies that the developer never need to know about routes,
+formulating URLs, how to make a POST request, how to stream data over HTTP, etc!</p>
+<p>To generate client side code, create a Python source file – let’s name it generator.py –
+and import all of the classes containing &#64;web_api’s
+to be generated. Then add the main entry poitn to generate the javascript code, like so:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">bantam.js</span> <span class="kn">import</span> <span class="n">JavascriptGenerator</span>
+<span class="gp">... </span><span class="kn">from</span> <span class="nn">salutations</span> <span class="kn">import</span> <span class="n">Greetings</span>
+<span class="gp">...</span>
+<span class="gp">... </span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;salutations.js&#39;</span><span class="p">,</span> <span class="s1">&#39;bw&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output</span><span class="p">:</span>
+<span class="gp">... </span>       <span class="n">JavascriptGenerator</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">out</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">skip_html</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Run the script as so:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>% python generate.py
+</pre></div>
+</div>
+<p>With the above Greetings example, the generated javasctipt code will mimic the Python:</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">javascript code auto-generated from Python server’s web API</span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span><span class="w"> </span><span class="nx">bantam</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
+<span class="nx">bantam</span><span class="p">.</span><span class="nx">salutations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
+<span class="nx">bantam</span><span class="p">.</span><span class="nx">salutations</span><span class="p">.</span><span class="nx">Greetings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="kr">constructor</span><span class="p">(</span><span class="nx">site</span><span class="p">){</span><span class="k">this</span><span class="p">.</span><span class="nx">site</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">site</span><span class="p">;}</span><span class="w"></span>
+
+<span class="w">      </span><span class="cm">/*</span>
+<span class="cm">      Welcome someone</span>
+<span class="cm">      The response will be provided as the (first) parameter passed into onsuccess</span>
+
+<span class="cm">      @param {function(string) =&gt; null} onsuccess callback inoked, passing in response from server on success</span>
+<span class="cm">      @param {function(int, str) =&gt; null}  onerror  callback upon error, passing in response code and status text</span>
+<span class="cm">      @param {{string}} name name of person to greet</span>
+<span class="cm">      */</span><span class="w"></span>
+<span class="w">      </span><span class="nx">welcome</span><span class="p">(</span><span class="nx">onsuccess</span><span class="p">,</span><span class="w"> </span><span class="nx">onerror</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="p">...</span><span class="w"></span>
+<span class="w">      </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">       </span><span class="cm">/*</span>
+<span class="cm">       Tell someone goodbye by telling them to have a day (of the given type)</span>
+<span class="cm">       The response will be provided as the (first) parameter passed into onsuccess</span>
+
+<span class="cm">       @param {function(string) =&gt; null} onsuccess callback inoked, passing in response from server on success</span>
+<span class="cm">       @param {function(int, str) =&gt; null}  onerror  callback upon error, passing in response code and status text</span>
+<span class="cm">       @param {{string}} type_of_day adjective describing type of day to have</span>
+<span class="cm">       */</span><span class="w"></span>
+<span class="w">      </span><span class="nx">goodbye</span><span class="p">(</span><span class="nx">onsuccess</span><span class="p">,</span><span class="w"> </span><span class="nx">onerror</span><span class="p">,</span><span class="w"> </span><span class="nx">type_of_day</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="p">...</span><span class="w"></span>
+<span class="w">      </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
 </div>
 </div>
-<div class="section" id="optional-parameters">
-<h2>Optional Parameters<a class="headerlink" href="#optional-parameters" title="Permalink to this headline">¶</a></h2>
+<p>The code maintains the same hierarchy in namespaces as modules in Python, albeit under a global <em>bantam</em> namespace.
+This prevents potential namespace collisions.  The signatures of the API mimic those defined in the Pyhon codebase,
+with the noted exception of the <em>onsuccess</em> and <em>onerror</em> callbacks as the first two parameters.
+This is typical of how plain javascript handles asynchronous transactions:  rather than returning a value or raising an
+exception, these callbacks are invoked instead, upon response from the server.</p>
+</section>
+<section id="module-bantam.client">
+<span id="python"></span><h2>Python<a class="headerlink" href="#module-bantam.client" title="Permalink to this heading">¶</a></h2>
+<p>Bantam provides and abstraction to easily declare Python clients to interact with a Bantam web application.
+Bantam even provide a means of auto-generating the code for clients.</p>
+<p>To auto-generate client code, an application <em>bantam_generate</em> is provided:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bantam_generate &lt;module-name&gt; <span class="o">[</span>&lt;suffix&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p>This will generate code to stdout for client classes that match the &#64;web_api’s defined in the provided module.  Each
+client class is named the same as the class it is derived from, unless the optional second argument is provided. If
+provided the class name will be appended with this suffix.</p>
+<p>You can also generate this code manually if desired, of course, following the pattern from auto-generation of code.
+This code provides an abstraction to the &#64;web_api interface implementation, stand-alone from the implementation code
+if desired. (e.g. providing a stand-alone client package for install separate from the implementation server-side
+package.</p>
+</section>
+</section>
+<section id="advanced-discussion-on-parameters">
+<h1>Advanced Discussion on Parameters<a class="headerlink" href="#advanced-discussion-on-parameters" title="Permalink to this heading">¶</a></h1>
+<section id="optional-parameters">
+<h2>Optional Parameters<a class="headerlink" href="#optional-parameters" title="Permalink to this heading">¶</a></h2>
 <p>If default parameter values are provided, they are optionally provided on the javascript client-side as well.
 Additionally, to refine the second rule of declaring a web API above, the type for a parameter can also be
 declared as an Optional to any the types declared there. Provided a default value, include <em>None</em>, is provided.</p>
-</div>
-<div class="section" id="streamed-responses">
-<h2>Streamed Responses<a class="headerlink" href="#streamed-responses" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="streamed-responses">
+<h2>Streamed Responses<a class="headerlink" href="#streamed-responses" title="Permalink to this heading">¶</a></h2>
 <p>Responses can be streamed back to the client.  To do so, the underlying Python server call must be written as
 an <em>AsyncGenerator</em>, returning a type <em>AsyncGenerator[None, &lt;int, float, bool, str, or bytes&gt;]</em>.   (Thus, ammending
 the rule of allowed return values above).  Consider this example of a PoetryReader class:</p>
@@ -321,30 +369,29 @@ This is particularly true when there is no or short sleep periods between yields
  <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
  <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#39;poem&#39;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
- <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
-     <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;DOMContentLoaded&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+ <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">     </span><span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;DOMContentLoaded&#39;</span><span class="p">,</span><span class="w"> </span><span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
-         <span class="kd">let</span> <span class="nx">reader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">bantam</span><span class="p">.</span><span class="nx">__main__</span><span class="p">.</span><span class="nx">PoetryReader</span><span class="p">(</span><span class="s2">&quot;http://localhost:8080&quot;</span><span class="p">);</span>
-         <span class="kd">let</span> <span class="nx">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-         <span class="kd">let</span> <span class="nx">onreceive</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span> <span class="nx">is_done</span><span class="p">){</span>
-              <span class="nx">html</span> <span class="o">+=</span> <span class="s2">&quot;&lt;p&gt;&quot;</span> <span class="o">+</span> <span class="nx">line</span> <span class="o">+</span> <span class="s2">&quot;&lt;/p&gt;&lt;br/&gt;&quot;</span><span class="p">;</span>
-              <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;poem&#39;</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">html</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nx">reader</span><span class="p">.</span><span class="nx">read_poem</span><span class="p">(</span><span class="nx">onreceive</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">reason</span><span class="p">){</span>
-             <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;UNEXPECTED ERROR OCCURRED: &quot;</span> <span class="o">+</span> <span class="nx">code</span> <span class="o">+</span> <span class="s2">&quot; : &quot;</span> <span class="o">+</span> <span class="nx">reason</span><span class="p">);</span>
-         <span class="p">});</span>
-     <span class="p">});</span>
- <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="w">         </span><span class="kd">let</span><span class="w"> </span><span class="nx">reader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">bantam</span><span class="p">.</span><span class="nx">__main__</span><span class="p">.</span><span class="nx">PoetryReader</span><span class="p">(</span><span class="s2">&quot;http://localhost:8080&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">         </span><span class="kd">let</span><span class="w"> </span><span class="nx">html</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"></span>
+<span class="w">         </span><span class="kd">let</span><span class="w"> </span><span class="nx">onreceive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">function</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span><span class="w"> </span><span class="nx">is_done</span><span class="p">){</span><span class="w"></span>
+<span class="w">              </span><span class="nx">html</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s2">&quot;&lt;p&gt;&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">line</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot;&lt;/p&gt;&lt;br/&gt;&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="w">              </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;poem&#39;</span><span class="p">).</span><span class="nx">innerHTML</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">html</span><span class="p">;</span><span class="w"></span>
+<span class="w">         </span><span class="p">}</span><span class="w"></span>
+<span class="w">         </span><span class="nx">reader</span><span class="p">.</span><span class="nx">read_poem</span><span class="p">(</span><span class="nx">onreceive</span><span class="p">,</span><span class="w"> </span><span class="kd">function</span><span class="p">(</span><span class="nx">code</span><span class="p">,</span><span class="w"> </span><span class="nx">reason</span><span class="p">){</span><span class="w"></span>
+<span class="w">             </span><span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;UNEXPECTED ERROR OCCURRED: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">code</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot; : &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">reason</span><span class="p">);</span><span class="w"></span>
+<span class="w">         </span><span class="p">});</span><span class="w"></span>
+<span class="w">     </span><span class="p">});</span><span class="w"></span>
+<span class="w"> </span><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
  <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
  <span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
 </pre></div>
 </div>
 </div>
 <p>Loading the page <a class="reference external" href="http://localhost:8080/static/index.html">http://localhost:8080/static/index.html</a> will execute the code.</p>
-</div>
-</div>
-<div class="section" id="streaming-requests">
-<h1>Streaming Requests<a class="headerlink" href="#streaming-requests" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="streamed-requests">
+<h2>Streamed Requests<a class="headerlink" href="#streamed-requests" title="Permalink to this heading">¶</a></h2>
 <p>You can also make requests that stream (upload) data to the server.  Here again, we add two more (final) allowable
 types for parameters that specify a parameter provides an (async) iterator for lopping over and sending data chunk
 by chunk:</p>
@@ -399,26 +446,27 @@ response is also streaming) and <em>onerror</em> callbacks act the same.  The di
 the first and only parameter of the function)</p></li>
 </ol>
 <p>An example of uploading a file using the above api (assuming the Uploader class belongs to the module <em>uploads</em>):</p>
-<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">...</span>
-<span class="kd">let</span> <span class="nx">onreceive</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">progress</span><span class="p">,</span> <span class="nx">is_done</span><span class="p">){</span>
-   <span class="p">...</span>
-<span class="p">}</span>
-<span class="kd">let</span> <span class="nx">onerror</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">reason</span><span class="p">){</span>
-   <span class="p">...</span>
-<span class="p">}</span>
-<span class="kd">let</span> <span class="nx">uploader</span> <span class="o">=</span> <span class="nx">bantam</span><span class="p">.</span><span class="nx">uploads</span><span class="p">.</span><span class="nx">Uploader</span><span class="p">(</span><span class="nx">site_url</span><span class="p">)</span>
-<span class="kd">let</span> <span class="nx">size_of_upload</span> <span class="o">=</span> <span class="mf">1024</span><span class="o">*</span><span class="mf">1024</span><span class="p">;</span>  <span class="c1">// bytes</span>
-<span class="kd">let</span> <span class="nx">send_byte_data</span> <span class="o">=</span> <span class="nx">uploader</span><span class="p">.</span><span class="nx">receive_streamed_data</span><span class="p">(</span><span class="nx">onreceive</span><span class="p">,</span> <span class="nx">onerror</span><span class="p">,</span> <span class="nx">size_of_upload</span><span class="p">)</span>
-<span class="kr">const</span> <span class="nx">reader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FileReader</span><span class="p">();</span>
-<span class="nx">reader</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
-    <span class="nx">send_byte_data</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">result</span><span class="p">);</span>
-<span class="p">});</span>
-<span class="nx">reader</span><span class="p">.</span><span class="nx">readAsText</span><span class="p">(</span><span class="nx">file</span><span class="p">);</span> <span class="c1">// assumng file is a file object created prior to this code</span>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">...</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="nx">onreceive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">function</span><span class="p">(</span><span class="nx">progress</span><span class="p">,</span><span class="w"> </span><span class="nx">is_done</span><span class="p">){</span><span class="w"></span>
+<span class="w">   </span><span class="p">...</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="nx">onerror</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">function</span><span class="p">(</span><span class="nx">code</span><span class="p">,</span><span class="w"> </span><span class="nx">reason</span><span class="p">){</span><span class="w"></span>
+<span class="w">   </span><span class="p">...</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="nx">uploader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">bantam</span><span class="p">.</span><span class="nx">uploads</span><span class="p">.</span><span class="nx">Uploader</span><span class="p">(</span><span class="nx">site_url</span><span class="p">)</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="nx">size_of_upload</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1024</span><span class="o">*</span><span class="mf">1024</span><span class="p">;</span><span class="w">  </span><span class="c1">// bytes</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="nx">send_byte_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">uploader</span><span class="p">.</span><span class="nx">receive_streamed_data</span><span class="p">(</span><span class="nx">onreceive</span><span class="p">,</span><span class="w"> </span><span class="nx">onerror</span><span class="p">,</span><span class="w"> </span><span class="nx">size_of_upload</span><span class="p">)</span><span class="w"></span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">reader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">FileReader</span><span class="p">();</span><span class="w"></span>
+<span class="nx">reader</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;load&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nx">send_byte_data</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">result</span><span class="p">);</span><span class="w"></span>
+<span class="p">});</span><span class="w"></span>
+<span class="nx">reader</span><span class="p">.</span><span class="nx">readAsText</span><span class="p">(</span><span class="nx">file</span><span class="p">);</span><span class="w"> </span><span class="c1">// assumng file is a file object created prior to this code</span><span class="w"></span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="pre-post-processing-request-responses">
-<h1>Pre/Post-Processing Request/Responses<a class="headerlink" href="#pre-post-processing-request-responses" title="Permalink to this headline">¶</a></h1>
+</section>
+</section>
+<section id="pre-post-processing-request-responses">
+<h1>Pre/Post-Processing Request/Responses<a class="headerlink" href="#pre-post-processing-request-responses" title="Permalink to this heading">¶</a></h1>
 <p>You can pre-process requests before a call is made to the underlying Python web API. Likewise, you can modify
 responses returned from a Python web API call before it is sent to the client.  There are two means to do so.
 One is at the application level, by calling <em>set_preprocessor</em> and <em>set_postprocessor</em> accordingly:</p>
@@ -441,16 +489,16 @@ arguments.  Using the above define <em>prerprocessor</em> and <em>postprocessor<
 <span class="nd">@web_api</span><span class="p">(</span><span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;text/plain&#39;</span><span class="p">,</span> <span class="n">preprocess</span><span class="o">=</span><span class="n">preprocessor</span><span class="p">,</span> <span class="n">postprocess</span><span class="o">=</span><span class="n">postprocessor</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="getting-request-context">
-<h1>Getting Request Context<a class="headerlink" href="#getting-request-context" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="getting-request-context">
+<h1>Getting Request Context<a class="headerlink" href="#getting-request-context" title="Permalink to this heading">¶</a></h1>
 <p>In the implementation of a web api, you can get the context of the rquest (i.e., the request headers).  Such
 information may be useful if chaining one Rest call to other backend Rest calls in a service hiearchy, and passing
 any contextual information around the originating request down through such a chain of calls.  Context is available
 through the <em>WebApplication.get_context()</em> call which returns a dictionary of the reques header keys and values.</p>
 <p>Be aware that accessing context may limit the use of your code as a “library-as-a-service”.  If a direct call is made
 to a web api without any request, the <em>get_context()</em> call will return None, a case you should consider handling.</p>
-</div>
+</section>
 
 
           </div>
@@ -481,12 +529,12 @@ to a web api without any request, the <em>get_context()</em> call will return No
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -503,7 +551,7 @@ to a web api without any request, the <em>get_context()</em> call will return No
       &copy;2020, John Rusnak.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
