@@ -128,12 +128,12 @@ Thus, each pair of class/method declared as a &#64;web_api must be unique, even 
 <dd><p>Main class for running a WebApplication server. See the documentation for <em>aiohttp</em> for information on the various
 parameters.  Additional parameters for this class are:</p>
 <dl class="field-list simple">
-<dt class="field-odd">Static_path<span class="colon">:</span></dt>
-<dd class="field-odd"><p>root path to where static files will be kept, mapped to a route “/static”, if provided</p>
-</dd>
-<dt class="field-even">Js_bundle_name<span class="colon">:</span></dt>
-<dd class="field-even"><p>the name of the javascript file, <strong>without</strong> exetension, where the client-side API
-will be generated, if provided</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>static_path</strong> – root path to where static files will be kept, mapped to a route “/static”, if provided</p></li>
+<li><p><strong>js_bundle_name</strong> – the name of the javascript file, <strong>without</strong> extension, where the client-side API
+will be generated, if provided</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py exception">
@@ -333,7 +333,7 @@ specify them explicitly, you must ensure they are maintained to be the same):</p
 <span class="gp">... </span>    <span class="nd">@classmethod</span>
 <span class="gp">... </span>    <span class="k">async</span> <span class="k">def</span> <span class="nf">constructor</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;MyServerApiInterface&quot;</span><span class="p">:</span>
 <span class="gp">... </span><span class="w">       </span><span class="sd">&#39;&#39;&#39;</span>
-<span class="gp">... </span><span class="sd">       Concreate constructor to create an instance of the class WITH SAEM @web_api DECORATOR AND</span>
+<span class="gp">... </span><span class="sd">       Concreate constructor to create an instance of the class WITH SAME @web_api DECORATOR AND</span>
 <span class="gp">... </span><span class="sd">       SIGNATURE</span>
 <span class="gp">... </span><span class="sd">       &#39;&#39;&#39;</span>
 <span class="gp">... </span>       <span class="k">return</span> <span class="n">MyServerApi</span><span class="p">()</span>
