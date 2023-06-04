@@ -317,7 +317,9 @@ and server.  One defines an interface class (usually in its own file) such as:</
 <span class="gp">...</span>
 </pre></div>
 </div>
-<p>One then defines the concrete class (which for best practice, has same name, sans ‘Interface’):</p>
+<p>One then defines the concrete class (which for best practice, has same name, sans ‘Interface’).  The
+&#64;web_api decorators need not be specified as bantam will ensure they are inherited. (But if you do
+specify them explicitly, you must ensure they are maintained to be the same):</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="kn">from</span> <span class="nn">bantam.client</span> <span class="kn">import</span> <span class="n">WebInterface</span>
 <span class="gp">... </span> <span class="kn">from</span> <span class="nn">bantam.api</span> <span class="kn">import</span> <span class="n">RestMethod</span>
 <span class="gp">... </span> <span class="kn">from</span> <span class="nn">bantam.decorators</span> <span class="n">web_api</span>
@@ -329,7 +331,6 @@ and server.  One defines an interface class (usually in its own file) such as:</
 <span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">_message_bits</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="s1">&#39;am&#39;</span><span class="p">,</span> <span class="s1">&#39;the&#39;</span><span class="p">,</span> <span class="s1">&#39;very&#39;</span><span class="p">,</span> <span class="s1">&#39;model&#39;</span><span class="p">]</span>
 <span class="gp">...</span>
 <span class="gp">... </span>    <span class="nd">@classmethod</span>
-<span class="gp">... </span>    <span class="nd">@web_api</span><span class="p">(</span><span class="n">methos</span><span class="o">=</span><span class="n">RestMethod</span><span class="o">.</span><span class="n">GET</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;application/json&#39;</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="k">async</span> <span class="k">def</span> <span class="nf">constructor</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;MyServerApiInterface&quot;</span><span class="p">:</span>
 <span class="gp">... </span><span class="w">       </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="gp">... </span><span class="sd">       Concreate constructor to create an instance of the class WITH SAEM @web_api DECORATOR AND</span>
@@ -338,7 +339,6 @@ and server.  One defines an interface class (usually in its own file) such as:</
 <span class="gp">... </span>       <span class="k">return</span> <span class="n">MyServerApi</span><span class="p">()</span>
 <span class="gp">...</span>
 <span class="gp">... </span>     <span class="nd">@classmethod</span>
-<span class="gp">... </span>     <span class="nd">@web_api</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">RestMethod</span><span class="o">.</span><span class="n">GET</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;text/plain&#39;</span><span class="p">)</span>
 <span class="gp">... </span>     <span class="k">async</span> <span class="k">def</span> <span class="nf">class_method_api</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parm1</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="gp">... </span><span class="w">         </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="gp">... </span><span class="sd">         Concreate class method to be implemented WITH SAME @web_api DECORATION AND,</span>
@@ -346,7 +346,6 @@ and server.  One defines an interface class (usually in its own file) such as:</
 <span class="gp">... </span><span class="sd">         &#39;&#39;&#39;</span>
 <span class="gp">... </span>         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;param1&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">parm1</span><span class="p">)}</span>
 <span class="gp">...</span>
-<span class="gp">... </span>     <span class="nd">@web_api</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">RestMethod</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;application/json&#39;</span><span class="p">)</span>
 <span class="gp">... </span>     <span class="k">async</span> <span class="k">def</span> <span class="nf">instance_method_api</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="gp">... </span><span class="w">         </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="gp">... </span><span class="sd">         Concrete instance method that is an Async Iterator over string values.</span>
