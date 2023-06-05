@@ -172,6 +172,41 @@ on Windows.</p></li>
 
 <p>Of particular interest is the modules parameter of the start method.  This determines which modules and therefore
 which classes and their the &#64;web_api definitions are loaded.</p>
+<span class="target" id="module-bantam.decorators"></span><dl class="py function">
+<dt class="sig sig-object py" id="bantam.decorators.web_api">
+<span class="sig-prename descclassname"><span class="pre">bantam.decorators.</span></span><span class="sig-name descname"><span class="pre">web_api</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RestMethod</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">RestMethod.GET</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_constructor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expire_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_disconnect</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ClientTimeout</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uuid_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocess</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Request</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postprocess</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Response</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">StreamResponse</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Response</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">StreamResponse</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Awaitable</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Awaitable</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#bantam.decorators.web_api" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator for class async method to register it as an API with the <cite>WebApplication</cite> class
+Decorated functions should be static class methods with parameters that are convertible from a string
+(things like float, int, str, bool).  Type hints must be provided and will be used to dynamically convert
+query parameeter strings to the right type.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyResource</span><span class="p">:</span>
+<span class="gp">...</span>
+<span class="gp">... </span>  <span class="nd">@web_api</span><span class="p">(</span><span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;text/html&quot;</span><span class="p">)</span>
+<span class="gp">... </span>  <span class="nd">@staticmethod</span>
+<span class="gp">... </span>  <span class="k">def</span> <span class="nf">say_hello</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="gp">... </span>     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Hi there, </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">!&quot;</span>
+</pre></div>
+</div>
+<p>Only GET calls with explicit parameters in the URL are support for now.  The above registers a route
+of the form:</p>
+<p><a class="reference external" href="http:/">http:/</a>/&lt;host&gt;:port&gt;/MyRestAPI?name=Jill</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>content_type</strong> – content type to disply (e.g., “text/html”)</p></li>
+<li><p><strong>method</strong> – one of MethodEnum rest api methods (GET or POST)</p></li>
+<li><p><strong>is_constructor</strong> – set to True if API is static method return a class instnace, False oherwise (default)</p></li>
+<li><p><strong>expire_obj</strong> – for instance methods only, epxire the object upon successful completion of that call</p></li>
+<li><p><strong>on_disconnect</strong> – callback if client disconnects unexpectedly</p></li>
+<li><p><strong>timeout</strong> – optional timeout value for response to request to timeout</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>callable decorator</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="allowed-type-annotations">
 <h1>Allowed Type Annotations<a class="headerlink" href="#allowed-type-annotations" title="Permalink to this heading">¶</a></h1>
@@ -388,33 +423,33 @@ an <em>AsyncGenerator</em>, returning a type <em>AsyncGenerator[None, &lt;int, f
 the rule of allowed return values above).  Consider this example of a PoetryReader class:</p>
 <div class="literal-block-wrapper docutils container" id="id2">
 <div class="code-block-caption"><span class="caption-text">Example of server code to stream a poem back to the client</span><a class="headerlink" href="#id2" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="kn">import</span> <span class="nn">asyncio</span>
+ <span class="kn">import</span> <span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">bantam.decorators</span> <span class="kn">import</span> <span class="n">RestMethod</span>
-<span class="kn">from</span> <span class="nn">bantam.web</span> <span class="kn">import</span> <span class="n">WebApplication</span><span class="p">,</span> <span class="n">web_api</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">AsyncGenerator</span>
+ <span class="kn">from</span> <span class="nn">bantam.decorators</span> <span class="kn">import</span> <span class="n">RestMethod</span>
+ <span class="kn">from</span> <span class="nn">bantam.web</span> <span class="kn">import</span> <span class="n">WebApplication</span><span class="p">,</span> <span class="n">web_api</span>
+ <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">AsyncGenerator</span>
 
-<span class="k">class</span> <span class="nc">PoetryReader</span><span class="p">:</span>
-    <span class="n">POEM</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">    Mary had a little lamb...</span>
-<span class="s2">    Its fleece was white as snow...</span>
-<span class="s2">    Everywhere that Mary went...</span>
-<span class="s2">    Her lamb was sure to go...</span>
-<span class="s2">    &quot;&quot;&quot;</span>
+ <span class="k">class</span> <span class="nc">PoetryReader</span><span class="p">:</span>
+     <span class="n">POEM</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">     Mary had a little lamb...</span>
+<span class="s2">     Its fleece was white as snow...</span>
+<span class="s2">     Everywhere that Mary went...</span>
+<span class="s2">     Her lamb was sure to go...</span>
+<span class="s2">     &quot;&quot;&quot;</span>
 
-    <span class="nd">@classmethod</span>
-    <span class="nd">@web_api</span><span class="p">(</span><span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;text/streamed&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">RestMethod</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">read_poem</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncGenerator</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">PoetryReader</span><span class="o">.</span><span class="n">POEM</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
-            <span class="k">yield</span> <span class="n">line</span>
-            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># for dramatic effect</span>
-        <span class="k">yield</span> <span class="s2">&quot;THE END&quot;</span>
-        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+     <span class="nd">@classmethod</span>
+     <span class="nd">@web_api</span><span class="p">(</span><span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;text/streamed&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">RestMethod</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
+     <span class="k">async</span> <span class="k">def</span> <span class="nf">read_poem</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncGenerator</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">PoetryReader</span><span class="o">.</span><span class="n">POEM</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+             <span class="k">yield</span> <span class="n">line</span>
+             <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># for dramatic effect</span>
+         <span class="k">yield</span> <span class="s2">&quot;THE END&quot;</span>
+         <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">app</span> <span class="o">=</span> <span class="n">WebApplication</span><span class="p">(</span><span class="n">static_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="n">js_bundle_name</span><span class="o">=</span><span class="s1">&#39;poetry_reader&#39;</span><span class="p">)</span>
-    <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">start</span><span class="p">())</span>  <span class="c1"># default to localhost HTTP on port 8080</span>
+ <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+     <span class="n">app</span> <span class="o">=</span> <span class="n">WebApplication</span><span class="p">(</span><span class="n">static_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="n">js_bundle_name</span><span class="o">=</span><span class="s1">&#39;poetry_reader&#39;</span><span class="p">)</span>
+     <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">start</span><span class="p">())</span>  <span class="c1"># default to localhost HTTP on port 8080</span>
 </pre></div>
 </div>
 </div>
