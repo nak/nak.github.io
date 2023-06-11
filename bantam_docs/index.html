@@ -106,7 +106,7 @@ by the class name, in this case <em>Greetings</em>, and the method name. Thus, t
 <em>Greetings</em> class, is mapped to the route ‘/Greetings/welcome”.  There are some rules about methods declared as
 <em>&#64;web_api</em>:</p>
 <ol class="arabic simple">
-<li><p>They can be &#64;staticmethods, &#64;classmethods or even instance methods (explained below), but &#64;classmethod or
+<li><p>They can be &#64;classmethods or even instance methods (explained below), but &#64;classmethod or
 instance methods are prefered</p></li>
 <li><p>They must provide all type hints for parameters and return value.  The types must
 be of only specific kinds as explained below</p></li>
@@ -125,6 +125,15 @@ payload of the request (not query parameters) as a simple JSON dictionary.</p>
 <p class="admonition-title">Caution</p>
 <p>Although the code prevents name collisions, the underlying (automated) routes do not, and a route must be unique.
 Thus, each pair of class/method declared as a &#64;web_api must be unique, even across differing modules.</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Batnam invokes all requests in a single thread within the server (and undoes any per-thread model of
+the underlying http/web package used to conduct the HTTP transactions).  The user needs to be keenly
+aware of the rules of asyncio. Specifically: (1) do not invoke blocking calls (await calls that yield processing
+back but take a long time to complete are OK, of course) and (2) understand that if stateful, the state
+of the server objects can change in the middle of execution if an await is invoked and processing is
+yielded to another async request from another client call.</p>
 </div>
 </section>
 <p>The specific WebApplication API is simple, and only the <em>start</em> method is of importance:</p>
@@ -402,8 +411,9 @@ specify them explicitly, you must ensure they are maintained to be the same):</p
 <p>One can then declare a Client that acts as a proxy to make calls to the server, thereby keeping the
 http protocol details hidden (abstracted away frm the user):</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="k">def</span> <span class="nf">async_call</span><span class="p">():</span>
-<span class="gp">... </span>     <span class="n">client</span> <span class="o">=</span> <span class="n">MyServerApiInterface</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">end_point</span><span class="o">=</span><span class="s1">&#39;https://blahblahblah&#39;</span><span class="p">)</span>
-<span class="gp">... </span>     <span class="n">instance</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">constructor</span><span class="p">()</span>
+<span class="gp">... </span>     <span class="n">client_end_point_mapping</span> <span class="o">=</span> <span class="n">MyServerApiInterface</span><span class="o">.</span><span class="n">ClientEndpointMapping</span><span class="p">()</span>
+<span class="gp">... </span>     <span class="n">client</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client_end_point_mapping</span><span class="p">[</span><span class="s1">&#39;https://blahblahblah&#39;</span><span class="p">]</span>
+<span class="gp">... </span>     <span class="n">instance</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">constructor</span><span class="p">()</span>
 <span class="gp">... </span>     <span class="k">async</span> <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">instance_method_api</span><span class="p">():</span>
 <span class="gp">... </span>         <span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 <span class="gp">...</span>
